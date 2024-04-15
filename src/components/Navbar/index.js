@@ -1,128 +1,247 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../Images/logo.svg";
-import { adminNavOptions, navOptions } from "@/utils";
+import { HiOutlineUserCircle } from "react-icons/hi2";
+import { RiMenu3Fill } from "react-icons/ri";
+import { IoMdClose } from "react-icons/io";
 
-const isAdminView = false;
-const isAuthUser = true;
+const isLoggedIn = true;
 
-const user = {
-  role: "admin",
-};
-
-function NavItems() {
-  return (
-    <ul className='flex flex-col p-4 md:p-0 mt-4 font-medium  rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 bg-white border border-gray-100'>
-      {isAdminView
-        ? adminNavOptions.map((item) => (
-            <li
-              className='cursor-pointer block py-2 pl-3 pr-4 text-gray-900 rounded md:p-0'
-              key={item.id}
-            >
-              {item.label}
-            </li>
-          ))
-        : navOptions.map((item) => (
-            <li
-              className='cursor-pointer block py-2 pl-3 pr-4 text-gray-900 rounded md:p-0'
-              key={item.id}
-            >
-              {item.label}
-            </li>
-          ))}
-    </ul>
-  );
-}
+const menuItems = [
+  {
+    name: "Fashion",
+    link: "#",
+    dropdownItems: [
+      { name: "Men's", category: "Mens" },
+      { name: "Women's", category: "Womens" },
+      { name: "kid's", category: "Kids" },
+    ],
+  },
+  {
+    name: "Phone",
+    link: "/Phone",
+  },
+  {
+    name: "Appliance",
+    link: "/Appliance",
+  },
+  {
+    name: "Grocery",
+    link: "/Grocery",
+  },
+];
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [dropdownIndex, setDropdownIndex] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = (index) => {
+    if (dropdownIndex === index) {
+      setDropdownIndex(null);
+    } else {
+      setDropdownIndex(index);
+    }
+  };
+
+  const handleListItemClick = (event, index) => {
+    event.preventDefault();
+    toggleDropdown(index);
+  };
+
   return (
-    <nav className='bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200'>
-      <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
-        <div className='flex items-center cursor-pointer'>
-          <Image src={logo} width={150} alt="logo" />
+    <div className='shadow-md w-full z-30 fixed top-0 left-0'>
+      <div className='flex items-center z-30 h-16 justify-between bg-white py-2 md:px-10 px-4'>
+        <div className='font-bold text-2xl cursor-pointer flex items-center justify-between gap-1'>
+          <Link href='/'>
+            <Image src={logo} width={150} alt='echobazar' />
+          </Link>
         </div>
-        <NavItems />
-        <div className='flex items-center md:order-2 gap-2'>
-          {!isAdminView && isAuthUser ? (
-            <>
-              <a
-                className={
-                  "cursor-pointer mr-2 font-medium block py-2 px-3 text-gray-900 rounded md:p-0"
-                }
+        <div className='hidden lg:block'>
+          <ul className='inline-flex space-x-8'>
+            {menuItems.map((item, index) => (
+              <li
+                key={item.name}
+                onClick={(event) => handleListItemClick(event, index)}
+                className='relative'
               >
-                Account
-              </a>
-              <a
-                className={
-                  "cursor-pointer mr-2 font-medium block py-2 px-3 text-gray-900 rounded md:p-0"
-                }
+                <Link
+                  key={item.name}
+                  href={item.link}
+                  className='text-md font-medium hover:text-[#07bfcd] text-gray-800 transition-all'
+                >
+                  {item.name}
+                </Link>
+                {item.dropdownItems && dropdownIndex === index && (
+                  <div className='absolute top-full -left-4 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10'>
+                    {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+                      <Link
+                        key={dropdownIndex}
+                        href={`/report/${dropdownItem.category}`}
+                        className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100'
+                      >
+                        {dropdownItem.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {isLoggedIn ? (
+          <>
+            <HiOutlineUserCircle
+              className='w-7 hidden md:block h-7 cursor-pointer mx-2 md:mx-3'
+              onClick={() => setOpen(!open)}
+            />
+            {open && (
+              <ul
+                className={`absolute z-10 w-36 right-10 bg-white top-16 shadow-md py-2 rounded-b-md ${
+                  open ? "block" : "hidden"
+                }`}
               >
-                Cart
-              </a>
-            </>
-          ) : null}
-          {user?.role === "admin" ? (
-            isAdminView ? (
-              <a
-                className={
-                  "cursor-pointer mr-2 font-medium block py-2 px-3 text-gray-900 rounded md:p-0"
-                }
-              >
-                Client View
-              </a>
-            ) : (
-              <a
-                className={
-                  "cursor-pointer mr-2 font-medium block py-2 px-3 text-gray-900 rounded md:p-0"
-                }
-              >
-                Admin View
-              </a>
-            )
-          ) : null}
-          {isAuthUser ? (
+                <Link href={"/Profile"}>
+                  <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                    Profile
+                  </li>
+                </Link>
+                <Link href={"/OrderHistory"}>
+                  <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                    Order History
+                  </li>
+                </Link>
+                <Link href={"/Wishlist"}>
+                  <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                    Wishlist
+                  </li>
+                </Link>
+                <Link href={"/logout"}>
+                  <li className='px-4 py-2 cursor-pointer text-red-600'>
+                    Logout
+                  </li>
+                </Link>
+              </ul>
+            )}
+          </>
+        ) : (
+          <>
             <button
               type='button'
-              className='text-white mr-2 bg-red-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 focus:outline-none'
-            >
-              Logout
-            </button>
-          ) : (
-            <button
-              type='button'
-              className='text-white mr-2 bg-[#07bfcd] focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 focus:outline-none'
+              className='inline-block rounded bg-[#07bfcd] px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]'
             >
               Login
             </button>
-          )}
-
-          <button
-            data-collapse-toggle='navbar-sticky'
-            type='button'
-            className='inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600'
-            aria-controls='navbar-sticky'
-            aria-expanded='false'
-          >
-            <span className='sr-only'>Open main menu</span>
-            <svg
-              className='w-6 h-6'
-              aria-hidden='true'
-              fill='currentColor'
-              viewBox='0 0 20 20'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                fill-rule='evenodd'
-                d='M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z'
-                clip-rule='evenodd'
-              ></path>
-            </svg>
-          </button>
+          </>
+        )}
+        <div className='lg:hidden'>
+          <RiMenu3Fill
+            onClick={toggleMenu}
+            className='h-6 w-6 cursor-pointer'
+          />
         </div>
+        {isMenuOpen && (
+          <div className='absolute inset-x-0 top-0 z-50 origin-top-right transform transition lg:hidden'>
+            <div className='divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5'>
+              <div className='px-5 pb-6 pt-5'>
+                <div className='flex items-center justify-between'>
+                  <div className='inline-flex items-center space-x-2'>
+                    <Link href='/'>
+                      <Image src={logo} width={150} alt='echobazar' />
+                    </Link>
+                  </div>
+                  <div className='-mr-2'>
+                    <button
+                      type='button'
+                      onClick={toggleMenu}
+                      className='inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black'
+                    >
+                      <span className='sr-only'>Close menu</span>
+                      <IoMdClose className="text-xl text-black" />
+                    </button>
+                  </div>
+                </div>
+                <div className='mt-6'>
+                  <nav className='grid gap-y-4'>
+                    {menuItems.map((item, index) => (
+                      <li
+                        key={item.name}
+                        onClick={(event) => handleListItemClick(event, index)}
+                        className='relative list-none'
+                      >
+                        <Link
+                          href={item.link}
+                          className='text-md font-semibold text-gray-800 hover:text-gray-900'
+                        >
+                          {item.name}
+                        </Link>
+                        {item.dropdownItems && dropdownIndex === index && (
+                          <div className='absolute top-full left-0 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10'>
+                            {item.dropdownItems.map(
+                              (dropdownItem, dropdownIndex) => (
+                                <Link
+                                  key={dropdownIndex}
+                                  href={`/report/${dropdownItem.category}`}
+                                  className='block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100'
+                                >
+                                  {dropdownItem.name}
+                                </Link>
+                              )
+                            )}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                    {isLoggedIn && (
+                      <>
+                        <HiOutlineUserCircle
+                          className='w-7 h-7 cursor-pointer mx-2 md:mx-3'
+                          onClick={() => setOpen(!open)}
+                        />
+                        {open && (
+                          <ul
+                            className={`absolute z-10 w-36 right-5 top-16 shadow-md py-2 rounded-md ${
+                              open ? "block" : "hidden"
+                            }`}
+                          >
+                            <Link href={"/Profile"}>
+                              <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                                Profile
+                              </li>
+                            </Link>
+                            <Link href={"/OrderHistory"}>
+                              <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                                Order History
+                              </li>
+                            </Link>
+                            <Link href={"/Wishlist"}>
+                              <li className='px-4 flex items-center gap-2 py-2 cursor-pointer'>
+                                Wishlist
+                              </li>
+                            </Link>
+                            <Link href={"/logout"}>
+                              <li className='px-4 py-2 cursor-pointer text-red-600'>
+                                Logout
+                              </li>
+                            </Link>
+                          </ul>
+                        )}
+                      </>
+                    )}
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </nav>
+    </div>
   );
 };
 
