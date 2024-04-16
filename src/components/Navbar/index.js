@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import logo from "../../Images/logo.svg";
-import { HiOutlineUserCircle } from "react-icons/hi2";
+import { FaRegUser } from "react-icons/fa";
 import { RiMenu3Fill } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 
@@ -74,7 +74,7 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   href={item.link}
-                  className='text-md font-medium hover:text-[#07bfcd] text-gray-800 transition-all'
+                  className='text-md font-medium hover:text-[#6366f1] text-gray-800 transition-all'
                 >
                   {item.name}
                 </Link>
@@ -97,7 +97,7 @@ const Navbar = () => {
         </div>
         {isLoggedIn ? (
           <>
-            <HiOutlineUserCircle
+            <FaRegUser 
               className='w-7 hidden md:block h-7 cursor-pointer mx-2 md:mx-3'
               onClick={() => setOpen(!open)}
             />
@@ -200,7 +200,7 @@ const Navbar = () => {
                     ))}
                     {isLoggedIn && (
                       <>
-                        <HiOutlineUserCircle
+                        <FaRegUser 
                           className='w-7 h-7 cursor-pointer mx-2 md:mx-3'
                           onClick={() => setOpen(!open)}
                         />
