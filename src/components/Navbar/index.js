@@ -3,9 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import logo from "../../Images/logo.svg";
-import { FaRegUser } from "react-icons/fa";
+import { FiUser } from "react-icons/fi";
 import { RiMenu3Fill } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
+import { MdOutlineShoppingCart } from "react-icons/md";
 
 const isLoggedIn = true;
 
@@ -96,8 +97,9 @@ const Navbar = () => {
           </ul>
         </div>
         {isLoggedIn ? (
-          <>
-            <FaRegUser 
+          <div className="flex items-center">
+            <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />
+            <FiUser 
               className='w-7 hidden md:block h-7 cursor-pointer mx-2 md:mx-3'
               onClick={() => setOpen(!open)}
             />
@@ -129,7 +131,7 @@ const Navbar = () => {
                 </Link>
               </ul>
             )}
-          </>
+          </div>
         ) : (
           <>
             <button
@@ -200,7 +202,7 @@ const Navbar = () => {
                     ))}
                     {isLoggedIn && (
                       <>
-                        <FaRegUser 
+                        <FiUser 
                           className='w-7 h-7 cursor-pointer mx-2 md:mx-3'
                           onClick={() => setOpen(!open)}
                         />
