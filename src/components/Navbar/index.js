@@ -86,7 +86,7 @@ const Navbar = () => {
     router.push("/");
   };
 
-  console.log(userInfo);
+  // console.log(userInfo);
 
   return (
     <div className="shadow-md w-full z-30 fixed top-0 left-0" ref={navbarRef}>
@@ -145,11 +145,13 @@ const Navbar = () => {
                     open ? "block" : "hidden"
                   }`}
                 >
-                  {userInfo.role === 'Seller' && <Link href={"/Seller"}>
-                    <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                      Admin Dashboard
-                    </li>
-                  </Link>}
+                  {userInfo.role === "Seller" && (
+                    <Link href={"/Admin"}>
+                      <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                        Admin Dashboard
+                      </li>
+                    </Link>
+                  )}
                   <Link href={"/Profile"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                       Profile
@@ -271,6 +273,13 @@ const Navbar = () => {
                               open ? "block" : "hidden"
                             }`}
                           >
+                            {userInfo.role === "Seller" && (
+                              <Link href={"/Admin"}>
+                                <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                                  Admin Dashboard
+                                </li>
+                              </Link>
+                            )}
                             <Link href={"/Profile"}>
                               <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                                 Profile
