@@ -9,7 +9,7 @@ const FeatureCards = () => {
     <div className='container px-5 py-10 mx-auto'>
         <div className='flex items-center justify-around flex-wrap -m-4'>
           <div className='p-4 md:w-[375px]'>
-            <div className='flex rounded-lg h-full bg-gray-100 p-8 flex-col'>
+            <div className='flex rounded-lg h-full bg-white p-8 flex-col'>
               <div className='flex items-center mb-3'>
                 <div className='w-10 h-10 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0'>
                   <TbTruckDelivery className='text-xl'/>
@@ -26,7 +26,7 @@ const FeatureCards = () => {
             </div>
           </div>
           <div className='p-4 md:w-[375px]'>
-            <div className='flex rounded-lg h-full bg-gray-100 p-8 flex-col'>
+            <div className='flex rounded-lg h-full bg-white p-8 flex-col'>
               <div className='flex items-center mb-3'>
                 <div className='w-10 h-10 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0'>
                   <FaIndianRupeeSign className='text-xl'/>
@@ -43,7 +43,7 @@ const FeatureCards = () => {
             </div>
           </div>
           <div className='p-4 md:w-[375px]'>
-            <div className='flex rounded-lg h-full bg-gray-100 p-8 flex-col'>
+            <div className='flex rounded-lg h-full bg-white p-8 flex-col'>
               <div className='flex items-center mb-3'>
                 <div className='w-10 h-10 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0'>
                   <CiDiscount1 className='text-xl'/>
@@ -60,7 +60,7 @@ const FeatureCards = () => {
             </div>
           </div>
           <div className='p-4 md:w-[375px]'>
-            <div className='flex rounded-lg h-full bg-gray-100 p-8 flex-col'>
+            <div className='flex rounded-lg h-full bg-white p-8 flex-col'>
               <div className='flex items-center mb-3'>
                 <div className='w-10 h-10 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0'>
                   <MdOutlineSupportAgent className='text-xl'/>
