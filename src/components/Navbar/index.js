@@ -146,23 +146,23 @@ const Navbar = () => {
                   }`}
                 >
                   {userInfo.role === "Seller" && (
-                    <Link href={"/Admin"}>
+                    <Link href={"/admin"}>
                       <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                         Admin Dashboard
                       </li>
                     </Link>
                   )}
-                  <Link href={"/Profile"}>
+                  <Link href={"/profile"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                       Profile
                     </li>
                   </Link>
-                  <Link href={"/OrderHistory"}>
+                  <Link href={"/orderHistory"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                       Order History
                     </li>
                   </Link>
-                  <Link href={"/Wishlist"}>
+                  <Link href={"/wishlist"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                       Wishlist
                     </li>
@@ -274,32 +274,33 @@ const Navbar = () => {
                             }`}
                           >
                             {userInfo.role === "Seller" && (
-                              <Link href={"/Admin"}>
+                              <Link href={"/admin"}>
                                 <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                                   Admin Dashboard
                                 </li>
                               </Link>
                             )}
-                            <Link href={"/Profile"}>
+                            <Link href={"/profile"}>
                               <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                                 Profile
                               </li>
                             </Link>
-                            <Link href={"/OrderHistory"}>
+                            <Link href={"/orderHistory"}>
                               <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                                 Order History
                               </li>
                             </Link>
-                            <Link href={"/Wishlist"}>
+                            <Link href={"/wishlist"}>
                               <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                                 Wishlist
                               </li>
                             </Link>
-                            <Link href={"/logout"}>
-                              <li className="px-4 py-2 cursor-pointer text-red-600">
-                                Logout
-                              </li>
-                            </Link>
+                            <button
+                              onClick={handleLogout}
+                              className="px-4 py-2 cursor-pointer text-red-600"
+                            >
+                              Logout
+                            </button>
                           </ul>
                         )}
                       </>
