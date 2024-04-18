@@ -9,7 +9,7 @@ export default function Home() {
     "https://images.unsplash.com/photo-1536987333706-fc9adfb10d91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
   ];
   return (
-    <div className='container mx-auto'>
+    <div className='bg-gray-100 container mx-auto'>
       <ImageSlideShow images={images} />
       <FeatureCards />
     </div>
