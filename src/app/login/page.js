@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -15,7 +15,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const { setIsLoggedIn, setUserInfo } =
+  const { setIsLoggedIn, setUserInfo,isLoggedIn } =
     useContext(GlobalContext);
 
   // Function to handle input changes
@@ -77,6 +77,10 @@ const Login = () => {
       ? true
       : false;
   };
+
+  useEffect(()=>{
+    if(isLoggedIn) router.push('/')
+  },[isLoggedIn])
 
   return (
     <div className="bg-gray-100 flex items-center justify-center h-screen px-5">
