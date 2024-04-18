@@ -13,13 +13,20 @@ import { usePathname, useRouter } from "next/navigation";
 
 const menuItems = [
   {
-    name: "Phone",
-    link: "#",
-    dropdownItems: [
-      { name: "Vivo", category: "Vivo" },
-      { name: "Oppo", category: "Oppo" },
-      { name: "Apple", category: "Apple" },
-    ],
+    name: "Vivo",
+    link: "/vivo",
+  },
+  {
+    name: "Oppo",
+    link: "/oppo",
+  },
+  {
+    name: "Redmi",
+    link: "/redmi",
+  },
+  {
+    name: "Apple",
+    link: "/apple",
   },
   {
     name: "Men",
@@ -28,10 +35,6 @@ const menuItems = [
   {
     name: "Women",
     link: "/womens",
-  },
-  {
-    name: "Appliance",
-    link: "/Appliance",
   },
 ];
 
