@@ -9,7 +9,7 @@ import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const menuItems = [
   {
@@ -39,11 +39,12 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownIndex, setDropdownIndex] = useState(null);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const router = useRouter();
   const { isLoggedIn, setIsLoggedIn, userInfo, setUserInfo } =
     useContext(GlobalContext);
-
   const navbarRef = useRef(null);
+  const isAdminView = pathname.includes("admin");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -58,7 +59,6 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-    
   }, []);
 
   const toggleMenu = () => {
@@ -96,7 +96,7 @@ const Navbar = () => {
             <Image src={logo} width={150} alt="echobazar" />
           </Link>
         </div>
-        <div className="hidden lg:block">
+        {!isAdminView && <div className="hidden lg:block">
           <ul className="inline-flex space-x-8">
             {menuItems.map((item, index) => (
               <li
@@ -130,9 +130,28 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-        </div>
+        </div>}
+        {isAdminView && <div className="hidden md:block">
+          <div className="flex items-center">
+            <Link href={"/admin/all-product"}>
+              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                Manage All Products
+              </li>
+            </Link>
+            <Link href={"/admin/add-product"}>
+              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                Add New Product
+              </li>
+            </Link>
+            <Link href={"/"}>
+              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                Client View
+              </li>
+            </Link>
+          </div>
+        </div>}
         <div className="flex items-center">
-          <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />
+          {!isAdminView && <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />}
           {isLoggedIn ? (
             <>
               <FiUser
