@@ -1,6 +1,7 @@
 "use client";
+import { GlobalContext } from "@/context";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FiUser } from "react-icons/fi";
 
@@ -13,6 +14,7 @@ const Register = () => {
     role: "Customer",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const {isLoggedIn} = useContext(GlobalContext)
   const router = useRouter();
 
   // Function to handle input changes
@@ -71,6 +73,10 @@ const Register = () => {
       ? true
       : false;
   };
+
+  useEffect(()=>{
+    if(isLoggedIn) router.push('/')
+  },[isLoggedIn])
 
   return (
     <div className="bg-white relative">
