@@ -25,8 +25,8 @@ const menuItems = [
     link: "/redmi",
   },
   {
-    name: "Apple",
-    link: "/apple",
+    name: "Smart TV",
+    link: "/smartTv",
   },
   {
     name: "Men",
