@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <GlobalState>
           <Navbar/>
           <Toaster />
-          <main className="flex min-h-screen flex-col mt-[25px]">{children}</main>
+          <main className="bg-gray-100 flex min-h-screen flex-col mt-[25px]">{children}</main>
         </GlobalState>
       </body>
     </html>
