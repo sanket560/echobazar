@@ -1,18 +1,70 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig, firebaseStorageURL } from "@/utils/firebaseConfig";
+import { resolve } from "styled-jsx/css";
+import { GlobalContext } from "@/context";
+
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app, firebaseStorageURL);
+
+const createUniqueFileName = (getFile) => {
+  const timeStamp = Date.now();
+  const randomStringValue = Math.random().toString(36).substring(2, 12);
+  return `${getFile.name}-${timeStamp}-${randomStringValue}`;
+};
+
+const helperForUploadingImageToFirebase = async (file) => {
+  const getFileName = createUniqueFileName(file);
+  const storageReference = ref(storage, `ecobazar/${getFileName}`);
+  const uploadImage = uploadBytesResumable(storageReference, file);
+
+  return new Promise((resolve, reject) => {
+    uploadImage.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        console.log(error);
+        reject(error);
+      },
+      () => {
+        getDownloadURL(uploadImage.snapshot.ref)
+          .then((downloadUrl) => resolve(downloadUrl))
+          .catch((error) => reject(error));
+      }
+    );
+  });
+};
 
 // Smart TV Form Component
-export const SmartTVForm = ({ onSubmit }) => {
+export const SmartTVForm = ({ onSubmit , isLoading }) => {
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
   const [displaySizes, setDisplaySizes] = useState([""]);
-  const [os, setOS] = useState("");
+  const [operatingSystem, setOperatingSystem] = useState("");
   const [description, setDescription] = useState("");
+  const [originalPrice, setOriginalPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [onSale, setOnSale] = useState("yes");
+  const { userInfo } = useContext(GlobalContext);
+  const sellerName = userInfo.name;
+  const type = "smart_tv";
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
+  const handleImageChange = async (e) => {
+    const extractImageUrl = await helperForUploadingImageToFirebase(
+      e.target.files[0]
+    );
+    // console.log(extractImageUrl);
+    if (extractImageUrl !== "") {
+      setImage(extractImageUrl);
+    }
   };
 
   const handleDisplaySizeChange = (index, value) => {
@@ -36,12 +88,26 @@ export const SmartTVForm = ({ onSubmit }) => {
     const formData = {
       name,
       brand,
+      type,
+      onSale,
+      sellerName,
       image,
       displaySizes,
-      os,
+      operatingSystem,
+      originalPrice,
+      discountPrice,
       description,
     };
     onSubmit(formData);
+  };
+
+  const isValidForm = () => {
+    return name &&
+      name.trim() !== "" &&
+      discountPrice &&
+      discountPrice.trim() !== ""
+      ? true
+      : false;
   };
 
   return (
@@ -61,7 +127,7 @@ export const SmartTVForm = ({ onSubmit }) => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
             required
           />
         </div>
@@ -77,7 +143,7 @@ export const SmartTVForm = ({ onSubmit }) => {
             id="brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
             required
           />
         </div>
@@ -93,7 +159,7 @@ export const SmartTVForm = ({ onSubmit }) => {
             id="image"
             onChange={handleImageChange}
             accept="image/*"
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
             required
           />
         </div>
@@ -110,7 +176,7 @@ export const SmartTVForm = ({ onSubmit }) => {
               id={`displaySize${index}`}
               value={size}
               onChange={(e) => handleDisplaySizeChange(index, e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
               required
             />
             <button
@@ -125,23 +191,23 @@ export const SmartTVForm = ({ onSubmit }) => {
         <button
           type="button"
           onClick={addDisplaySizeField}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+          className="w-full rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] mb-4"
         >
           Add Display Size
         </button>
         <div className="mb-4">
           <label
-            htmlFor="os"
+            htmlFor="operatingSystem"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
             Operating System
           </label>
           <input
             type="text"
-            id="os"
-            value={os}
-            onChange={(e) => setOS(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            id="operatingSystem"
+            value={operatingSystem}
+            onChange={(e) => setOperatingSystem(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
             required
           />
         </div>
@@ -156,15 +222,74 @@ export const SmartTVForm = ({ onSubmit }) => {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
             required
           ></textarea>
         </div>
+        <div className="mb-4">
+          <label
+            htmlFor="originalPrice"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Original Price
+          </label>
+          <input
+            type="number"
+            id="originalPrice"
+            value={originalPrice}
+            onChange={(e) => setOriginalPrice(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="discountPrice"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Discount Price
+          </label>
+          <input
+            type="number"
+            id="discountPrice"
+            value={discountPrice}
+            onChange={(e) => setDiscountPrice(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="onsale"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            On Sale
+          </label>
+          <select
+            id="onSale"
+            value={onSale}
+            onChange={(e) => setOnSale(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-indigo-300"
+            required
+          >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+          disabled={!isValidForm() || isLoading}
+          className={`disabled:opacity-50 w-full rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] ${
+            isLoading ? "cursor-not-allowed" : ""
+          }`}
         >
-          Add Smart TV
+          {isLoading ? (
+            <div className="flex justify-center items-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+            </div>
+          ) : (
+            "Add The Product"
+          )}
         </button>
       </form>
     </div>
