@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const AddNewProducut = () => {
   const [selectedProductType, setSelectedProductType] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleFormSubmit = async (formData) => {
