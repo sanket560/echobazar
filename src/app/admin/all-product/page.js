@@ -37,7 +37,7 @@ const AllProduct = () => {
   return (
     <div className="flex items-center justify-center md:mt-10 px-5">
       <div className="py-6 sm:py-4 lg:py-12">
-        <p className="text-center text-xl font-semibold pb-3">Click On Any Product To Update </p>
+        <p className="text-center text-xl font-semibold pb-10">Click On Any Product To Update </p>
         <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
           {products.length === 0 ? (
             <p className="text-center text-gray-500">You don't have any products.</p>
