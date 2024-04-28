@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema(
   {
@@ -6,16 +6,9 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    type: {
-      type: String,
-      enum: ["phone", "mens", "womens", "smart_tv"],
-      required: true,
-    },
     brand: {
       type: String,
-      required: function () {
-        return this.type === "phone" || this.type === "smart_tv";
-      },
+      required: true
     },
     image: {
       type: String,
@@ -23,33 +16,11 @@ const ProductSchema = new mongoose.Schema(
     },
     colors: {
       type: [String],
-      required: function () {
-        return this.type === "phone";
-      },
-    },
-    sizes: {
-      type: [String],
-      required: function () {
-        return this.type === "mens" || this.type === "womens";
-      },
-    },
-    displaySizes: {
-      type: [String],
-      required: function () {
-        return this.type === "smart_tv";
-      },
-    },
-    operatingSystem: {
-      type: String,
-      required: function () {
-        return this.type === "smart_tv";
-      },
+      required:true,
     },
     storageOptions: {
       type: [String],
-      required: function () {
-        return this.type === "phone";
-      },
+      required: true,
     },
     description: {
       type: String,
