@@ -1,4 +1,3 @@
-"use client";
 import FeatureCards from "@/components/FeatureCards";
 import ImageSlideShow from "./../components/ImageSlideShow/index";
 import AllProoductListing from "@/components/AllProductsListing";
