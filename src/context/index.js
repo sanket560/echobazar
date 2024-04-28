@@ -10,6 +10,7 @@ export default function GlobalState({ children }) {
   const [userInfo, setUserInfo] = useState(null);
   const [allProduct , setAllProduct] = useState([]);
   const [loading , setLoading ] = useState(false);
+  const [selectedProductToUpdate , setSelectedProductToUpdate] = useState(null)
 
   const fetchAllProduct = async () => {
     setLoading(true)
@@ -44,7 +45,7 @@ export default function GlobalState({ children }) {
 
   return (
     <GlobalContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn,loading, userInfo, setUserInfo,allProduct }}
+      value={{ isLoggedIn, selectedProductToUpdate ,setSelectedProductToUpdate, setIsLoggedIn,loading, userInfo, setUserInfo,allProduct }}
     >
       {children}
     </GlobalContext.Provider>
