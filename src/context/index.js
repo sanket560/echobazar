@@ -41,7 +41,8 @@ export default function GlobalState({ children }) {
     } else {
       setIsLoggedIn(false);
     }
-  }, [Cookies]);
+  }, []);
+  
 
   return (
     <GlobalContext.Provider
