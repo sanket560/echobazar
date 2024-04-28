@@ -46,6 +46,13 @@ const ProductCard = ({ product ,products, setProducts }) => {
     }
   };
 
+  const formatPrice = (price) => {
+    return price.toLocaleString("en-IN", {
+      style: "currency",
+      currency: "INR",
+    });
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white shadow-md rounded-lg max-w-sm">
@@ -62,7 +69,7 @@ const ProductCard = ({ product ,products, setProducts }) => {
           </h3>
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold text-gray-900">
-              &#x20B9; {product.originalPrice}
+              {formatPrice(product.discountPrice)}
             </span>
           </div>
           {isAdminView ? (
@@ -75,7 +82,7 @@ const ProductCard = ({ product ,products, setProducts }) => {
                 Update
               </button>
               <button
-               onClick={() => deleteAProduct(product._id)}
+                onClick={() => deleteAProduct(product._id)}
                 type="button"
                 className="rounded w-24 md:w-36 bg-red-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
               >
@@ -85,6 +92,7 @@ const ProductCard = ({ product ,products, setProducts }) => {
           ) : (
             <div className="flex items-center space-x-2 my-2">
               <button
+                onClick={() => router.push(`/product/${product._id}`)}
                 type="button"
                 className="rounded w-24 md:w-36 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
               >
