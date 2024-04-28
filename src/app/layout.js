@@ -3,6 +3,7 @@ import "./globals.css";
 import GlobalState from "@/context";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/Footer";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
           <Navbar/>
           <Toaster />
           <main className="bg-gray-100 flex min-h-screen flex-col mt-[25px]">{children}</main>
+          <Footer />
         </GlobalState>
       </body>
     </html>
