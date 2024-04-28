@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   getDownloadURL,
   getStorage,
@@ -8,7 +8,6 @@ import {
 } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig, firebaseStorageURL } from "@/utils/firebaseConfig";
-import { resolve } from "styled-jsx/css";
 import { GlobalContext } from "@/context";
 
 const app = initializeApp(firebaseConfig);
@@ -43,19 +42,18 @@ const helperForUploadingImageToFirebase = async (file) => {
 };
 
 // Phone Form Component
-export const PhoneForm = ({ onSubmit, isLoading }) => {
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [image, setImage] = useState("");
-  const [colors, setColors] = useState([""]);
-  const [storageOptions, setStorageOptions] = useState([""]);
-  const [description, setDescription] = useState("");
-  const [originalPrice, setOriginalPrice] = useState("");
-  const [discountPrice, setDiscountPrice] = useState("");
-  const [onSale, setOnSale] = useState("yes");
+export const PhoneForm = ({ onSubmit, isLoading , selectedProductToUpdate}) => {
+  const [name, setName] = useState(selectedProductToUpdate ? selectedProductToUpdate.name : "");
+  const [brand, setBrand] = useState(selectedProductToUpdate ? selectedProductToUpdate.brand : "");
+  const [image, setImage] = useState(selectedProductToUpdate ? selectedProductToUpdate.image : "");
+  const [colors, setColors] = useState(selectedProductToUpdate ? selectedProductToUpdate.colors : [""]);
+  const [storageOptions, setStorageOptions] = useState(selectedProductToUpdate ? selectedProductToUpdate.storageOptions : [""]);
+  const [description, setDescription] = useState(selectedProductToUpdate ? selectedProductToUpdate.description : "");
+  const [originalPrice, setOriginalPrice] = useState(selectedProductToUpdate ? selectedProductToUpdate.originalPrice : "");
+  const [discountPrice, setDiscountPrice] = useState(selectedProductToUpdate ? selectedProductToUpdate.discountPrice : "");
+  const [onSale, setOnSale] = useState(selectedProductToUpdate ? selectedProductToUpdate.onSale : "yes");
   const { userInfo } = useContext(GlobalContext);
-  const sellerName = userInfo.name;
-  const type = "phone";
+  const sellerName = userInfo?.name;
 
   const handleImageChange = async (e) => {
     const extractImageUrl = await helperForUploadingImageToFirebase(
@@ -103,7 +101,6 @@ export const PhoneForm = ({ onSubmit, isLoading }) => {
     e.preventDefault();
     const formData = {
       name,
-      type,
       brand,
       image,
       colors,
@@ -120,11 +117,12 @@ export const PhoneForm = ({ onSubmit, isLoading }) => {
   const isValidForm = () => {
     return name &&
       name.trim() !== "" &&
-      discountPrice &&
+      typeof discountPrice === 'string' &&
       discountPrice.trim() !== ""
       ? true
       : false;
   };
+  
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white mt-8">
