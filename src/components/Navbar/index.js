@@ -17,24 +17,16 @@ const menuItems = [
     link: "/vivo",
   },
   {
+    name: "Apple",
+    link: "/apple",
+  },
+  {
     name: "Oppo",
     link: "/oppo",
   },
   {
     name: "Redmi",
     link: "/redmi",
-  },
-  {
-    name: "Smart TV",
-    link: "/smartTv",
-  },
-  {
-    name: "Men",
-    link: "/mens",
-  },
-  {
-    name: "Women",
-    link: "/womens",
   },
 ];
 
