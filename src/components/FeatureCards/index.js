@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { TbTruckDelivery } from "react-icons/tb";
 import { FaIndianRupeeSign } from "react-icons/fa6";
