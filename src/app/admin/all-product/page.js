@@ -34,7 +34,7 @@ const AllProduct = () => {
         <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
           {products.length === 0 ? (
             <p className="text-center text-gray-500">
-              You don't have any products.
+            You don&apos;t have any products.
             </p>
           ) : (
             <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:grid-cols-3 xl:grid-cols-4">
