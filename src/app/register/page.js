@@ -74,9 +74,11 @@ const Register = () => {
       : false;
   };
 
-  useEffect(()=>{
-    if(isLoggedIn) router.push('/')
-  },[isLoggedIn])
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <div className="bg-white relative">
