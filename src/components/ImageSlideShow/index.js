@@ -17,20 +17,20 @@ const ImageSlideShow = ({ images }) => {
   return (
     <div className="relative">
       <Image
-        className="w-full h-96 transition-all duration-600"
+        className="w-full h-48 md:h-[70vh] transition-all duration-600"
         src={images[currentIndex]}
         alt={`Slide ${currentIndex}`}
         width={1200}
         height={800}
       />
       <button
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white h-32 text-black px-3 py-1 rounded-md transition-opacity duration-300 hover:shadow-md"
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white h-8 md:h-32 text-black px-3 py-1 rounded-full md:rounded-md transition-opacity duration-300 hover:shadow-md"
         onClick={goToPrevious}
       >
         <IoIosArrowBack />
       </button>
       <button
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white h-32 text-black px-3 py-1 rounded-md transition-opacity duration-300 hover:shadow-md"
+        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white h-8 md:h-32 text-black px-3 py-1 rounded-full md:rounded-md transition-opacity duration-300 hover:shadow-md"
         onClick={goToNext}
       >
        <IoIosArrowForward />
