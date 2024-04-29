@@ -1,11 +1,11 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyAa2OaEe76paYZBPskuDl6-YJ1043jA7Uo",
-  authDomain: "echobazar-1c232.firebaseapp.com",
-  projectId: "echobazar-1c232",
-  storageBucket: "echobazar-1c232.appspot.com",
-  messagingSenderId: "872991012360",
-  appId: "1:872991012360:web:21889a98c2a88a98e0c3bd",
-  measurementId: "G-RX8MM62S11",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDERID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-export const firebaseStorageURL = "gs://echobazar-1c232.appspot.com";
+export const firebaseStorageBucket =  process.env.NEXT_PUBLIC_FIREBASE_BASE_STORAGE_URL;
