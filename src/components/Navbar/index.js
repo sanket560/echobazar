@@ -91,62 +91,68 @@ const Navbar = () => {
             <Image src={logo} width={150} alt="echobazar" />
           </Link>
         </div>
-        {!isAdminView && <div className="hidden lg:block">
-          <ul className="inline-flex space-x-8">
-            {menuItems.map((item, index) => (
-              <li
-                key={item.name}
-                onClick={(event) => handleListItemClick(event, index)}
-                className="relative"
-              >
-                <Link
+        {!isAdminView && (
+          <div className="hidden lg:block">
+            <ul className="inline-flex space-x-8">
+              {menuItems.map((item, index) => (
+                <li
                   key={item.name}
-                  href={item.link}
-                  className="text-md font-medium hover:text-[#6366f1] text-gray-800 transition-all flex items-center gap-1"
+                  onClick={(event) => handleListItemClick(event, index)}
+                  className="relative"
                 >
-                  {item.name}
-                  {item.dropdownItems && (
-                    <IoIosArrowDown className="text-gray-500" />
+                  <Link
+                    key={item.name}
+                    href={item.link}
+                    className="text-md font-medium hover:text-[#6366f1] text-gray-800 transition-all flex items-center gap-1"
+                  >
+                    {item.name}
+                    {item.dropdownItems && (
+                      <IoIosArrowDown className="text-gray-500" />
+                    )}
+                  </Link>
+                  {item.dropdownItems && dropdownIndex === index && (
+                    <div className="absolute top-full -left-4 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
+                      {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
+                        <Link
+                          key={dropdownIndex}
+                          href={`/report/${dropdownItem.category}`}
+                          className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                        >
+                          {dropdownItem.name}
+                        </Link>
+                      ))}
+                    </div>
                   )}
-                </Link>
-                {item.dropdownItems && dropdownIndex === index && (
-                  <div className="absolute top-full -left-4 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
-                    {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                      <Link
-                        key={dropdownIndex}
-                        href={`/report/${dropdownItem.category}`}
-                        className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                      >
-                        {dropdownItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>}
-        {isAdminView && <div className="hidden md:block">
-          <div className="flex items-center">
-            <Link href={"/admin/all-product"}>
-              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                Manage All Products
-              </li>
-            </Link>
-            <Link href={"/admin/add-product"}>
-              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                Add New Product
-              </li>
-            </Link>
-            <Link href={"/"}>
-              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                Client View
-              </li>
-            </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>}
+        )}
+        {isAdminView && (
+          <div className="hidden md:block">
+            <div className="flex items-center">
+              <Link href={"/admin/all-product"}>
+                <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                  Manage All Products
+                </li>
+              </Link>
+              <Link href={"/admin/add-product"}>
+                <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                  Add New Product
+                </li>
+              </Link>
+              <Link href={"/"}>
+                <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
+                  Client View
+                </li>
+              </Link>
+            </div>
+          </div>
+        )}
         <div className="flex items-center">
-          {!isAdminView && <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />}
+          {!isAdminView && (
+            <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />
+          )}
           {isLoggedIn ? (
             <>
               <FiUser
@@ -231,59 +237,69 @@ const Navbar = () => {
                     </button>
                   </div>
                 </div>
-                <div className="mt-6">
-                  <nav className="grid gap-y-4">
-                    {menuItems.map((item, index) => (
-                      <li
-                        key={item.name}
-                        onClick={(event) => handleListItemClick(event, index)}
-                        className="relative list-none"
-                      >
-                        <Link
-                          href={item.link}
-                          className="text-md flex items-center gap-2 font-semibold text-gray-800 hover:text-gray-900"
+                <div className="mt-4">
+                  <nav className="grid gap-y-2">
+                    {!isAdminView &&
+                      menuItems.map((item, index) => (
+                        <li
+                          key={item.name}
+                          onClick={(event) => handleListItemClick(event, index)}
+                          className="relative list-none"
                         >
-                          {item.name}
-                          {item.dropdownItems && (
-                            <IoIosArrowDown className="text-gray-500" />
-                          )}
-                        </Link>
-                        {item.dropdownItems && dropdownIndex === index && (
-                          <div className="absolute top-full left-0 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
-                            {item.dropdownItems.map(
-                              (dropdownItem, dropdownIndex) => (
-                                <Link
-                                  key={dropdownIndex}
-                                  href={`/report/${dropdownItem.category}`}
-                                  className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                                >
-                                  {dropdownItem.name}
-                                </Link>
-                              )
+                          <Link
+                            href={item.link}
+                            className="text-md flex items-center gap-2 font-semibold text-gray-800 hover:text-gray-900"
+                          >
+                            {item.name}
+                            {item.dropdownItems && (
+                              <IoIosArrowDown className="text-gray-500" />
                             )}
-                          </div>
-                        )}
-                      </li>
-                    ))}
-                    {!isLoggedIn && (
-                      <Link href="/login">
-                        <button
-                          type="button"
-                          className="md:hidden w-full inline-block rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
-                        >
-                          Login
-                        </button>
-                      </Link>
+                          </Link>
+                          {item.dropdownItems && dropdownIndex === index && (
+                            <div className="absolute top-full left-0 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
+                              {item.dropdownItems.map(
+                                (dropdownItem, dropdownIndex) => (
+                                  <Link
+                                    key={dropdownIndex}
+                                    href={`/report/${dropdownItem.category}`}
+                                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                                  >
+                                    {dropdownItem.name}
+                                  </Link>
+                                )
+                              )}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    {isAdminView && ( // Render only if in admin view
+                      <>
+                        <Link href={"/admin/all-product"}>
+                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                            Manage All Products
+                          </li>
+                        </Link>
+                        <Link href={"/admin/add-product"}>
+                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                            Add New Product
+                          </li>
+                        </Link>
+                        <Link href={"/"}>
+                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                            Client View
+                          </li>
+                        </Link>
+                      </>
                     )}
-                    {isLoggedIn && (
+                    {isLoggedIn ? (
                       <>
                         <FiUser
-                          className="w-7 h-7 cursor-pointer mx-2 md:mx-3"
+                          className="w-7 h-7 cursor-pointer mt-2 mx-2 md:mx-3"
                           onClick={() => setOpen(!open)}
                         />
                         {open && (
                           <ul
-                            className={`absolute z-10 w-36 right-5 top-16 shadow-md py-2 rounded-md ${
+                            className={`absolute bg-white z-10 w-36 right-5 top-16 shadow-md py-2 rounded-md ${
                               open ? "block" : "hidden"
                             }`}
                           >
@@ -317,6 +333,17 @@ const Navbar = () => {
                             </button>
                           </ul>
                         )}
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/login">
+                          <button
+                            type="button"
+                            className="hidden md:inline-block rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+                          >
+                            Login
+                          </button>
+                        </Link>
                       </>
                     )}
                   </nav>
