@@ -8,4 +8,4 @@ export const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-export const firebaseStorageBucket =  process.env.NEXT_PUBLIC_FIREBASE_BASE_STORAGE_URL;
+export const firebaseStorageURL =  process.env.NEXT_PUBLIC_FIREBASE_BASE_STORAGE_URL;
