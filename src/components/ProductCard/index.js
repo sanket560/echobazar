@@ -2,6 +2,7 @@
 import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useContext } from "react";
 import toast from "react-hot-toast";
@@ -56,13 +57,16 @@ const ProductCard = ({ product, fetchProducts }) => {
   return (
     <div className="md:w-[325px] mx-auto">
       <div className="bg-white shadow-md rounded-lg">
-        <Image
-          style={imageStyles}
-          src={product.image}
-          width={300}
-          height={400}
-          alt="product image"
-        />
+        <Link href={`/product/${product._id}`}>
+          <Image
+            style={imageStyles}
+            src={product.image}
+            width={300}
+            height={400}
+            alt="product image"
+            className="cursor-pointer"
+          />
+        </Link>
         <div className="flex flex-col gap-2 px-5 pb-5">
           <h3 className="text-gray-900 font-semibold text-xl tracking-tight">
             {product.name}
@@ -78,7 +82,7 @@ const ProductCard = ({ product, fetchProducts }) => {
               </span>
             </p>
           </div>
-          {isAdminView ? (
+          {isAdminView && (
             <div className="flex items-center space-x-2 my-2">
               <button
                 onClick={handleUpdateClick}
@@ -95,22 +99,6 @@ const ProductCard = ({ product, fetchProducts }) => {
                 Delete
               </button>
             </div>
-          ) : (
-            <div className="flex items-center space-x-2 my-2">
-              <button
-                onClick={() => router.push(`/product/${product._id}`)}
-                type="button"
-                className="rounded px-4 w-28 md:w-32 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
-              >
-                Details
-              </button>
-              <button
-                type="button"
-                className="rounded px-3 bg-green-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
-              >
-                Add To Cart
-              </button>
-            </div>
           )}
         </div>
       </div>
@@ -119,3 +107,21 @@ const ProductCard = ({ product, fetchProducts }) => {
 };
 
 export default ProductCard;
+
+// : (
+//   {/* <div className="flex items-center space-x-2 my-2">
+//     <button
+//       onClick={() => router.push(`/product/${product._id}`)}
+//       type="button"
+//       className="rounded px-4 w-full md:w-32 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+//     >
+//       Details
+//     </button>
+//     <button
+//       type="button"
+//       className="rounded w-full px-3 bg-green-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+//     >
+//       Add To Cart
+//     </button>
+//   </div> */}
+// )
