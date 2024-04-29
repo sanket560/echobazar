@@ -17,8 +17,8 @@ const menuItems = [
     link: "/vivo",
   },
   {
-    name: "Apple",
-    link: "/apple",
+    name: "Iphone",
+    link: "/Iphone",
   },
   {
     name: "Oppo",
