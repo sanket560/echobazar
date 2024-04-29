@@ -34,7 +34,7 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    onSale: {
+    latestProduct: {
       type: String,
       required: true,
     },
