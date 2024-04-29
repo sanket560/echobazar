@@ -13,15 +13,15 @@ export async function PUT(req) {
     const {
       _id,
       name,
-      originalPrice,
-      price,
-      description,
-      sellerName,
-      storageOptions,
-      colors,
-      onSale,
-      discountPrice,
+      brand,
       image,
+      colors,
+      storageOptions,
+      description,
+      originalPrice,
+      latestProduct,
+      discountPrice,
+      sellerName,
     } = extractData;
 
     const updatedProduct = await Product.findOneAndUpdate(
@@ -30,15 +30,15 @@ export async function PUT(req) {
       },
       {
         name,
-        originalPrice,
-        price,
-        description,
-        sellerName,
-        storageOptions,
-        colors,
-        onSale,
-        discountPrice,
+        brand,
         image,
+        colors,
+        storageOptions,
+        description,
+        originalPrice,
+        latestProduct,
+        discountPrice,
+        sellerName,
       },
       { new: true }
     );
