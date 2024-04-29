@@ -106,7 +106,7 @@ const ProductDetails = ({ product }) => {
                 ))}
               </select>
             </div>
-            <p className="mb-6 mt-4 text-gray-500">Storage Options:</p>
+            <p className="mb-6 mt-4 block font-medium text-gray-700">Storage Options:</p>
             <div className="flex gap-2">
               {product.storageOptions.map((storageOption, index) => (
                 <span
@@ -117,9 +117,9 @@ const ProductDetails = ({ product }) => {
                 </span>
               ))}
             </div>
-            <p className="mb-6 mt-4 text-gray-500">Description:</p>
+            <p className="mb-6 mt-4 block font-medium text-gray-700">Description:</p>
             <p className="mb-6 whitespace-pre-wrap">{product.description}</p>
-            <p className="mb-6 mt-4 text-gray-500">Seller:</p>
+            <p className="mb-6 mt-4 block font-medium text-gray-700">Seller:</p>
             <p className="mb-6">{product.sellerName}</p>
           </div>
         </div>
