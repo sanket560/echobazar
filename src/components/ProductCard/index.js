@@ -13,7 +13,7 @@ const imageStyles = {
   padding: "8px",
 };
 
-const ProductCard = ({ product, products, setProducts }) => {
+const ProductCard = ({ product, fetchProducts }) => {
   const { setSelectedProductToUpdate } = useContext(GlobalContext);
   const pathname = usePathname();
   const router = useRouter();
@@ -36,7 +36,7 @@ const ProductCard = ({ product, products, setProducts }) => {
       const data = await res.json();
       if (data.success) {
         toast.success(data.message);
-        setProducts(products.filter((p) => p._id !== productId));
+        fetchProducts();
       } else {
         toast.error(data.message);
       }
