@@ -42,10 +42,14 @@ const Navbar = () => {
   const isAdminView = pathname.includes("admin");
 
   useEffect(() => {
+    setDropdownIndex(null);
+    setOpen(false);
+    setIsMenuOpen(false)
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setDropdownIndex(null);
         setOpen(false);
+        setIsMenuOpen(false)
       }
     };
 
@@ -54,7 +58,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
