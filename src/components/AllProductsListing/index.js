@@ -9,10 +9,10 @@ const AllProductListing = () => {
   const { allProduct } = useContext(GlobalContext);
 
   return (
-    <div className="w-[1450px] px-5 pb-10 md:pb-20 mx-auto">
-      <p className="font-semibold mb-4 text-3xl">All Products</p>
+    <div className="md:w-[1450px] px-5 pb-10 md:pb-20 mx-auto">
+      <p className="font-semibold mb-4 text-3xl">Latest Products</p>
       {allProduct.length == 0 ? (
-        <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8">
           {[...Array(4)].map((_, index) => (
             <div key={index}>
               <Skeleton width={280} height={350}/>
@@ -20,7 +20,7 @@ const AllProductListing = () => {
           ))}
         </div>
       ) : (
-        <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8">
           {allProduct.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

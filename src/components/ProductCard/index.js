@@ -13,7 +13,7 @@ const imageStyles = {
   padding: "8px",
 };
 
-const ProductCard = ({ product ,products, setProducts }) => {
+const ProductCard = ({ product, products, setProducts }) => {
   const { setSelectedProductToUpdate } = useContext(GlobalContext);
   const pathname = usePathname();
   const router = useRouter();
@@ -32,7 +32,7 @@ const ProductCard = ({ product ,products, setProducts }) => {
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-  
+
       const data = await res.json();
       if (data.success) {
         toast.success(data.message);
@@ -40,7 +40,6 @@ const ProductCard = ({ product ,products, setProducts }) => {
       } else {
         toast.error(data.message);
       }
-
     } catch (e) {
       console.log(e);
     }
@@ -50,12 +49,13 @@ const ProductCard = ({ product ,products, setProducts }) => {
     return price.toLocaleString("en-IN", {
       style: "currency",
       currency: "INR",
+      minimumFractionDigits: 0,
     });
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white shadow-md rounded-lg max-w-sm">
+    <div className="md:w-[325px] mx-auto">
+      <div className="bg-white shadow-md rounded-lg">
         <Image
           style={imageStyles}
           src={product.image}
@@ -67,10 +67,16 @@ const ProductCard = ({ product ,products, setProducts }) => {
           <h3 className="text-gray-900 font-semibold text-xl tracking-tight">
             {product.name}
           </h3>
-          <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-gray-900">
+          <div className="flex items-center gap-2">
+            <p className="text-xl md:text-2xl font-extrabold text-gray-900">
               {formatPrice(product.discountPrice)}
-            </span>
+            </p>
+            <p className="text-sm md:text-lg text-gray-900">
+              M.R.P. :{" "}
+              <span className="line-through">
+                {formatPrice(product.originalPrice)}
+              </span>
+            </p>
           </div>
           {isAdminView ? (
             <div className="flex items-center space-x-2 my-2">
@@ -94,13 +100,13 @@ const ProductCard = ({ product ,products, setProducts }) => {
               <button
                 onClick={() => router.push(`/product/${product._id}`)}
                 type="button"
-                className="rounded w-24 md:w-36 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+                className="rounded px-4 w-28 md:w-32 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
               >
                 Details
               </button>
               <button
                 type="button"
-                className="rounded px-3 md:w-36 bg-green-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+                className="rounded px-3 bg-green-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
               >
                 Add To Cart
               </button>
