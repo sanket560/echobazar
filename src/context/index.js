@@ -1,7 +1,7 @@
 "use client";
 import Cookies from "js-cookie";
 import { createContext, useEffect, useState } from "react";
-const FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL;
+const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const GlobalContext = createContext(null);
 
@@ -16,7 +16,7 @@ export default function GlobalState({ children }) {
     setLoading(true)
     try {
       const response = await fetch(
-        `http://localhost:3000/api/all-product`,
+        `${FRONTEND_BASE_URL}/api/all-product`,
         {
           method: "GET",
         }
