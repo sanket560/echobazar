@@ -16,7 +16,7 @@ export default function GlobalState({ children }) {
     setLoading(true)
     try {
       const response = await fetch(
-        `${FRONTEND_BASE_URL}/api/all-product`,
+        `${FRONTEND_BASE_URL}api/all-product`,
         {
           method: "GET",
         }
