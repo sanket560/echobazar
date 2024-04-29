@@ -2,7 +2,7 @@
 import ProductCard from "@/components/ProductCard";
 import React, { useEffect, useState } from "react";
 
-const FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL;
+const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 const AllProduct = () => {
   const [products, setProducts] = useState([]);
@@ -11,7 +11,7 @@ const AllProduct = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/admin/all-product`,
+          `${FRONTEND_BASE_URL}/api/admin/all-product`,
           {
             method: "GET",
           }
