@@ -3,7 +3,7 @@ import { PhoneForm } from "@/components/PhoneForm";
 import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 
