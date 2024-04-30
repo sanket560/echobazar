@@ -11,14 +11,14 @@ import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
 
-const menuItems = [
+const menuItemsOfDesktop = [
   {
     name: "Vivo",
     link: "/vivo",
   },
   {
     name: "Iphone",
-    link: "/Iphone",
+    link: "/iphone",
   },
   {
     name: "Oppo",
@@ -27,6 +27,44 @@ const menuItems = [
   {
     name: "Redmi",
     link: "/redmi",
+  },
+];
+
+const menuItemsOfMobile = [
+  {
+    name: "Vivo",
+    link: "/vivo",
+  },
+  {
+    name: "Iphone",
+    link: "/iphone",
+  },
+  {
+    name: "Oppo",
+    link: "/oppo",
+  },
+  {
+    name: "Redmi",
+    link: "/redmi",
+  },
+  {
+    divider: true,
+  },
+  {
+    name: "Admin Dashboard",
+    link: "/admin",
+  },
+  {
+    name: "Profile",
+    link: "/profile",
+  },
+  {
+    name: "Order History",
+    link: "/order-history",
+  },
+  {
+    name: "Wishlist",
+    link: "/Wishlist",
   },
 ];
 
@@ -44,12 +82,12 @@ const Navbar = () => {
   useEffect(() => {
     setDropdownIndex(null);
     setOpen(false);
-    setIsMenuOpen(false)
+    setIsMenuOpen(false);
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setDropdownIndex(null);
         setOpen(false);
-        setIsMenuOpen(false)
+        setIsMenuOpen(false);
       }
     };
 
@@ -98,7 +136,7 @@ const Navbar = () => {
         {!isAdminView && (
           <div className="hidden lg:block">
             <ul className="inline-flex space-x-8">
-              {menuItems.map((item, index) => (
+              {menuItemsOfDesktop.map((item, index) => (
                 <li
                   key={item.name}
                   onClick={(event) => handleListItemClick(event, index)}
@@ -110,23 +148,7 @@ const Navbar = () => {
                     className="text-md font-medium hover:text-[#6366f1] text-gray-800 transition-all flex items-center gap-1"
                   >
                     {item.name}
-                    {item.dropdownItems && (
-                      <IoIosArrowDown className="text-gray-500" />
-                    )}
                   </Link>
-                  {item.dropdownItems && dropdownIndex === index && (
-                    <div className="absolute top-full -left-4 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
-                      {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                        <Link
-                          key={dropdownIndex}
-                          href={`/report/${dropdownItem.category}`}
-                          className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                        >
-                          {dropdownItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
                 </li>
               ))}
             </ul>
@@ -242,108 +264,67 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <nav className="grid gap-y-2">
+                  <nav className="grid gap-y-2 pb-3">
                     {!isAdminView &&
-                      menuItems.map((item, index) => (
-                        <li
-                          key={item.name}
-                          onClick={(event) => handleListItemClick(event, index)}
-                          className="relative list-none"
-                        >
-                          <Link
-                            href={item.link}
-                            className="text-md flex items-center gap-2 font-semibold text-gray-800 hover:text-gray-900"
-                          >
-                            {item.name}
-                            {item.dropdownItems && (
-                              <IoIosArrowDown className="text-gray-500" />
-                            )}
-                          </Link>
-                          {item.dropdownItems && dropdownIndex === index && (
-                            <div className="absolute top-full left-0 bg-white shadow-lg py-2 mt-1 rounded-md divide-y divide-gray-100 z-10">
-                              {item.dropdownItems.map(
-                                (dropdownItem, dropdownIndex) => (
-                                  <Link
-                                    key={dropdownIndex}
-                                    href={`/report/${dropdownItem.category}`}
-                                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                                  >
-                                    {dropdownItem.name}
-                                  </Link>
-                                )
-                              )}
-                            </div>
+                      menuItemsOfMobile.map((item, index) => (
+                        <React.Fragment key={index}>
+                          {item.divider ? (
+                            <div className="border-t border-gray-200"></div>
+                          ) : (
+                            (item.name !== "Admin Dashboard" ||
+                              userInfo?.role === "Seller") && (
+                              <li
+                                onClick={(event) =>
+                                  handleListItemClick(event, index)
+                                }
+                                className="relative  list-none"
+                              >
+                                <Link
+                                  href={item.link}
+                                  className="text-md font-medium hover:text-[#6366f1] text-gray-800 transition-all"
+                                >
+                                  {item.name}
+                                </Link>
+                              </li>
+                            )
                           )}
-                        </li>
+                        </React.Fragment>
                       ))}
-                    {isAdminView && ( // Render only if in admin view
-                      <>
+                    {isAdminView && (
+                      <div className="grid gap-y-2">
                         <Link href={"/admin/all-product"}>
-                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                          <li className="text-md list-none font-medium hover:text-[#6366f1] text-gray-800 transition-all">
                             Manage All Products
                           </li>
                         </Link>
                         <Link href={"/admin/add-product"}>
-                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                          <li className="text-md list-none font-medium hover:text-[#6366f1] text-gray-800 transition-all">
                             Add New Product
                           </li>
                         </Link>
                         <Link href={"/"}>
-                          <li className="flex items-center gap-2 py-2 cursor-pointer">
+                          <li className="text-md list-none font-medium hover:text-[#6366f1] text-gray-800 transition-all">
                             Client View
                           </li>
                         </Link>
-                      </>
+                      </div>
                     )}
                     {isLoggedIn ? (
                       <>
-                        <FiUser
-                          className="w-7 h-7 cursor-pointer mt-2 mx-2 md:mx-3"
-                          onClick={() => setOpen(!open)}
-                        />
-                        {open && (
-                          <ul
-                            className={`absolute bg-white z-10 w-36 right-5 top-16 shadow-md py-2 rounded-md ${
-                              open ? "block" : "hidden"
-                            }`}
-                          >
-                            {userInfo.role === "Seller" && (
-                              <Link href={"/admin"}>
-                                <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                                  Admin Dashboard
-                                </li>
-                              </Link>
-                            )}
-                            <Link href={"/profile"}>
-                              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                                Profile
-                              </li>
-                            </Link>
-                            <Link href={"/orderHistory"}>
-                              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                                Order History
-                              </li>
-                            </Link>
-                            <Link href={"/wishlist"}>
-                              <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                                Wishlist
-                              </li>
-                            </Link>
-                            <button
-                              onClick={handleLogout}
-                              className="px-4 py-2 cursor-pointer text-red-600"
-                            >
-                              Logout
-                            </button>
-                          </ul>
-                        )}
+                        {" "}
+                        <button
+                          onClick={handleLogout}
+                          className="py-2 cursor-pointer text-red-600"
+                        >
+                          Logout
+                        </button>
                       </>
                     ) : (
                       <>
                         <Link href="/login">
                           <button
                             type="button"
-                            className="hidden md:inline-block rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+                            className="block md:hidden w-full rounded bg-indigo-500 px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
                           >
                             Login
                           </button>
