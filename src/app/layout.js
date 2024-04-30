@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -19,7 +18,22 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <GlobalState>
           <Navbar />
-          <Toaster position="bottom-center" reverseOrder={false} />
+          <Toaster
+            toastOptions={{
+              success: {
+                style: {
+                  background: "green",
+                  color: "white",
+                },
+              },
+              error: {
+                style: {
+                  background: "red",
+                  color: "white",
+                },
+              },
+            }}
+          />
           <main className="bg-gray-100 flex min-h-screen flex-col mt-[25px]">
             {children}
           </main>
