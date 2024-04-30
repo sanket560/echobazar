@@ -1,14 +1,22 @@
 "use client";
 import { PhoneForm } from "@/components/PhoneForm";
+import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 
 
 const AddNewProducut = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const {isLoggedIn  , userInfo} = useContext(GlobalContext);
+
+  useEffect(() => {
+    if (!isLoggedIn && userInfo?.role !== "Seller") {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   const handleFormSubmit = async (formData) => {
     setIsLoading(true);

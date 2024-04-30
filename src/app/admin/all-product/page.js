@@ -1,11 +1,21 @@
 "use client";
+import { GlobalContext } from "@/context";
+import { useRouter } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 const AllProduct = () => {
   const [products, setProducts] = useState([]);
+  const router = useRouter();
+  const {isLoggedIn  , userInfo} = useContext(GlobalContext);
+
+  useEffect(() => {
+    if (!isLoggedIn && userInfo?.role !== "Seller") {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   useEffect(() => {
     const fetchData = async () => {

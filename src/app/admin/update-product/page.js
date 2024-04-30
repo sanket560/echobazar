@@ -3,13 +3,19 @@ import { PhoneForm } from "@/components/PhoneForm";
 import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const UpdateProduct = () => {
-  const { selectedProductToUpdate } = useContext(GlobalContext);
+  const { selectedProductToUpdate, isLoggedIn  , userInfo } = useContext(GlobalContext);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoggedIn && userInfo?.role !== "Seller") {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   // console.log(selectedProductToUpdate)
 
