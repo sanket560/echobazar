@@ -10,6 +10,7 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import { GlobalContext } from "@/context";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const menuItemsOfDesktop = [
   {
@@ -121,6 +122,7 @@ const Navbar = () => {
     Cookies.remove("token");
     localStorage.clear();
     router.push("/");
+    toast.success("Logout! See You Soon")
   };
 
   // console.log(userInfo);

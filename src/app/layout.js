@@ -18,22 +18,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <GlobalState>
           <Navbar />
-          <Toaster
-            toastOptions={{
-              success: {
-                style: {
-                  background: "green",
-                  color: "white",
-                },
-              },
-              error: {
-                style: {
-                  background: "red",
-                  color: "white",
-                },
-              },
-            }}
-          />
+          <Toaster />
           <main className="bg-gray-100 flex min-h-screen flex-col mt-[25px]">
             {children}
           </main>
