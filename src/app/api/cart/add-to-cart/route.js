@@ -3,42 +3,42 @@ import Cart from "@/models/Cart.Model";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-export async function POST(req){
+export async function POST(req) {
     try {
         await connectDB();
         const data = await req.json();
-        const {productID , userID} = data;
+        const { productID, userID } = data;
 
-        const isCurrentCartItemAlreadyExists = await Cart.find({
-            productID : productID,
-            userID : userID
-        })
+        const isCurrentCartItemAlreadyExists = await Cart.findOne({
+            productID: productID,
+            userID: userID
+        });
 
-        if(isCurrentCartItemAlreadyExists){
+        if (isCurrentCartItemAlreadyExists) {
             return NextResponse.json({
                 success: false,
-                message: "This product is there in cart",
+                message: "This product is already in the cart",
             });
         }
 
         const saveProductToCart = await Cart.create(data);
-        if(saveProductToCart){
+        if (saveProductToCart) {
             return NextResponse.json({
                 success: true,
-                message: "product added to cart",
+                message: "Product added to cart",
             });
-        }else{
+        } else {
             return NextResponse.json({
                 success: false,
-                message: "product not added",
+                message: "Product not added",
             });
         }
 
     } catch (error) {
-        console.log("error from adding a product", error);
+        console.log("Error adding product to cart", error);
         return NextResponse.json({
-          success: false,
-          message: "Something went wrong ! Please try again later",
+            success: false,
+            message: "Something went wrong! Please try again later",
         });
     }
 }
