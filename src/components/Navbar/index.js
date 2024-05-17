@@ -73,10 +73,13 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownIndex, setDropdownIndex] = useState(null);
   const [open, setOpen] = useState(false);
+  const [cartDropDown, setCartDropDown] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
   const { isLoggedIn, setIsLoggedIn, userInfo, setUserInfo } =
     useContext(GlobalContext);
+
   const navbarRef = useRef(null);
   const isAdminView = pathname.includes("admin");
 
@@ -84,11 +87,13 @@ const Navbar = () => {
     setDropdownIndex(null);
     setOpen(false);
     setIsMenuOpen(false);
+    setCartDropDown(false);
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setDropdownIndex(null);
         setOpen(false);
         setIsMenuOpen(false);
+        setCartDropDown(false);
       }
     };
 
@@ -122,7 +127,7 @@ const Navbar = () => {
     Cookies.remove("token");
     localStorage.clear();
     router.push("/");
-    toast.success("Logout! See You Soon")
+    toast.success("Logout! See You Soon");
   };
 
   // console.log(userInfo);
@@ -179,8 +184,64 @@ const Navbar = () => {
         )}
         <div className="flex items-center">
           {!isAdminView && (
-            <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 hidden md:block h-7 cursor-pointer" />
+            <div className="relative hidden md:block mr-2">
+              <MdOutlineShoppingCart
+                onClick={() => setCartDropDown(!cartDropDown)}
+                className="w-7 mx-4 text-gray-800 h-7 cursor-pointer"
+              />
+              <span className="absolute top-0 right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                1
+              </span>
+            </div>
           )}
+
+          {cartDropDown && (
+            <ul
+              className={`absolute z-10 w-min right-0 bg-white top-16 shadow-md py-2 rounded-b-md transition-all duration-300 ${cartDropDown ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+            >
+              <div className="relative w-screen max-w-sm px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mt-4 space-y-6">
+                  <ul className="space-y-4">
+                    <li className="flex items-center gap-4">
+                      <img
+                        src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=830&q=80"
+                        alt=""
+                        className="size-16 rounded object-cover"
+                      />
+
+                      <div>
+                        <h3 className="text-sm text-gray-900">
+                          Basic Tee 6-Pack
+                        </h3>
+
+                        <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
+                          <div>
+                            <dt className="inline">Size:</dt>
+                            <dd className="inline">XXS</dd>
+                          </div>
+
+                          <div>
+                            <dt className="inline">Color:</dt>
+                            <dd className="inline">White</dd>
+                          </div>
+                        </dl>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <div className="space-y-4 text-center">
+                    <a
+                      href="#"
+                      className="block rounded bg-gray-700 px-5 py-3 text-sm text-gray-100 transition hover:bg-gray-600"
+                    >
+                      Checkout
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </ul>
+          )}
+
           {isLoggedIn ? (
             <>
               <FiUser
@@ -238,7 +299,12 @@ const Navbar = () => {
           )}
         </div>
         <div className="md:hidden flex items-center">
-          <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 md:hidden block h-7 cursor-pointer" />
+          <div className="relative mr-2">
+            <MdOutlineShoppingCart className="w-7 mx-4 text-gray-800 h-7 cursor-pointer" />
+            <span className="absolute top-0 right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+              1
+            </span>
+          </div>
           <RiMenu3Fill
             onClick={toggleMenu}
             className="h-6 w-6 cursor-pointer"
