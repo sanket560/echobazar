@@ -1,13 +1,17 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { CiHeart } from "react-icons/ci";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { IoMdShare } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
 import { FaStarHalfAlt } from "react-icons/fa";
-
+import { addToCart } from "@/controller/cart";
+import { GlobalContext } from "@/context";
+import toast from "react-hot-toast";
 
 const ProductDetails = ({ product }) => {
+  const { userInfo } = useContext(GlobalContext);
   const formatPrice = (price) => {
     return price.toLocaleString("en-IN", {
       style: "currency",
@@ -15,6 +19,18 @@ const ProductDetails = ({ product }) => {
       minimumFractionDigits: 0,
     });
   };
+
+  async function handleAddToCart(getProduct) {
+    const res = await addToCart({
+      productID: getProduct._id,
+      userID: userInfo._id,
+    });
+    if (res.success) {
+      toast.success(res.message);
+    } else {
+      toast.error(res.message);
+    }
+  }
 
   return (
     <section className="md:p-8 p-3 bg-white mt-10 md:py-16 rounded-md">
@@ -47,11 +63,21 @@ const ProductDetails = ({ product }) => {
               {product.name}
             </h1>
             <div className="flex items-center gap-2 mt-3">
-              <span className="text-yellow-400"><FaStar/></span>
-              <span className="text-yellow-400"><FaStar/></span>
-              <span className="text-yellow-400"><FaStar/></span>
-              <span className="text-yellow-400"><FaStar/></span>
-              <span className="text-yellow-400"><FaStarHalfAlt/></span>
+              <span className="text-yellow-400">
+                <FaStar />
+              </span>
+              <span className="text-yellow-400">
+                <FaStar />
+              </span>
+              <span className="text-yellow-400">
+                <FaStar />
+              </span>
+              <span className="text-yellow-400">
+                <FaStar />
+              </span>
+              <span className="text-yellow-400">
+                <FaStarHalfAlt />
+              </span>
             </div>
             <div className="mt-3 flex items-center gap-2">
               <p className="text-2xl font-extrabold text-gray-900">
@@ -73,6 +99,7 @@ const ProductDetails = ({ product }) => {
               </button>
               <button
                 type="button"
+                onClick={() => handleAddToCart(product)}
                 className="rounded flex w-full mt-2 md:mt-0 items-center justify-center gap-2 md:w-52 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#6366f1] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0"
               >
                 <MdOutlineShoppingCart className="text-lg" /> Add To Cart
@@ -106,7 +133,9 @@ const ProductDetails = ({ product }) => {
                 ))}
               </select>
             </div>
-            <p className="mb-6 mt-4 block font-medium text-gray-700">Storage Options:</p>
+            <p className="mb-6 mt-4 block font-medium text-gray-700">
+              Storage Options:
+            </p>
             <div className="flex gap-2">
               {product.storageOptions.map((storageOption, index) => (
                 <span
@@ -117,7 +146,9 @@ const ProductDetails = ({ product }) => {
                 </span>
               ))}
             </div>
-            <p className="mb-6 mt-4 block font-medium text-gray-700">Description:</p>
+            <p className="mb-6 mt-4 block font-medium text-gray-700">
+              Description:
+            </p>
             <p className="mb-6 whitespace-pre-wrap">{product.description}</p>
             <p className="mb-6 mt-4 block font-medium text-gray-700">Seller:</p>
             <p className="mb-6">{product.sellerName}</p>
