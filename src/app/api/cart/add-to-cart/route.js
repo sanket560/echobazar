@@ -7,7 +7,7 @@ export async function POST(req) {
     try {
         await connectDB();
         const data = await req.json();
-        const { productID, userID } = data;
+        const { productID, userID, colors, storageOptions, quantity} = data; 
 
         const isCurrentCartItemAlreadyExists = await Cart.findOne({
             productID: productID,
@@ -21,7 +21,18 @@ export async function POST(req) {
             });
         }
 
-        const saveProductToCart = await Cart.create(data);
+        const newData = {
+            productID: productID,
+            userID: userID,
+            colors: colors,
+            storageOptions: storageOptions,
+            quantity: quantity,
+            discountPrice: data.discountPrice,
+            originalPrice: data.originalPrice,
+            brand: data.brand,
+        };
+
+        const saveProductToCart = await Cart.create(newData);
         if (saveProductToCart) {
             return NextResponse.json({
                 success: true,

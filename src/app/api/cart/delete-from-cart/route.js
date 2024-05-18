@@ -1,6 +1,5 @@
 import connectDB from "@/database/dbConfig";
 import Cart from "@/models/Cart.Model";
-import { trusted } from "mongoose";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";

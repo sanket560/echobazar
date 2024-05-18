@@ -1,6 +1,7 @@
 import connectDB from "@/database/dbConfig";
 import Cart from "@/models/Cart.Model";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
 
@@ -9,15 +10,27 @@ export async function GET(req) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
+
     const extractAllCartItems = await Cart.find({ userID: id })
-      .populate("userID")
+      .populate({
+        path: "userID",
+        select: "-password",
+      })
       .populate("productID");
-    if (extractAllCartItems) {
+
+    if (extractAllCartItems && extractAllCartItems.length > 0) {
       return NextResponse.json({
         success: true,
         data: extractAllCartItems,
       });
-    }else{
+    } else {
       return NextResponse.json({
         success: false,
         message: "No product is added in your cart",
@@ -27,7 +40,7 @@ export async function GET(req) {
     console.log("error from fetching cart product", error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Something went wrong! Please try again later",
     });
   }
 }
