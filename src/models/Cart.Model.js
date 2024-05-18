@@ -10,6 +10,26 @@ const CartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
     },
+    brand: {
+      type: String,
+      required: true
+    },
+    colors: {
+      type: String,
+      required:true,
+    },
+    storageOptions: {
+      type: String,
+      required: true,
+    },
+    originalPrice: {
+      type: Number,
+      required: true,
+    },
+    discountPrice: {
+      type: Number,
+      required: true,
+    },
     quantity: {
       type: Number,
       required: true,
