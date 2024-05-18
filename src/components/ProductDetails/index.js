@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { IoMdShare } from "react-icons/io";
@@ -11,7 +11,12 @@ import { GlobalContext } from "@/context";
 import toast from "react-hot-toast";
 
 const ProductDetails = ({ product }) => {
-  const { userInfo } = useContext(GlobalContext);
+  const { userInfo , isLoggedIn, extractGetAllCartItems} = useContext(GlobalContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [storageOptions, setStorageOptions] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
   const formatPrice = (price) => {
     return price.toLocaleString("en-IN", {
       style: "currency",
@@ -20,11 +25,25 @@ const ProductDetails = ({ product }) => {
     });
   };
 
-  async function handleAddToCart(getProduct) {
+  async function handleAddToCart() {
+    if (!isLoggedIn) {
+      toast.error("Please log in first to add products to the cart.");
+      return;
+    }
+
+    setIsLoading(true);
     const res = await addToCart({
-      productID: getProduct._id,
+      productID: product._id,
       userID: userInfo._id,
+      colors: selectedColor,
+      storageOptions: storageOptions,
+      quantity: quantity,
+      discountPrice: product.discountPrice,
+      originalPrice: product.originalPrice,
+      brand: product.brand,
     });
+    setIsLoading(false);
+    extractGetAllCartItems();
     if (res.success) {
       toast.success(res.message);
     } else {
@@ -32,13 +51,22 @@ const ProductDetails = ({ product }) => {
     }
   }
 
+  const isValidForm = () => {
+    return selectedColor &&
+      selectedColor.trim() !== "" &&
+      storageOptions &&
+      storageOptions.trim() !== ""
+      ? true
+      : false;
+  };
+
   return (
     <section className="md:p-8 p-3 bg-white mt-10 md:py-16 rounded-md">
       <div className="max-w-7xl px-4 mx-auto 2xl:px-0 relative">
         <div className="absolute top-0 right-[16rem] md:right-[-75px] z-10">
           <button
             type="button"
-            className="w-10 md:w-max flex justify-center items-center mt-3 h-10 md:py-2 md:px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray1800 hover:bg-gray-100"
+            className="w-10 md:w-max flex justify-center items-center mt-3 h-10 md:py-2 md:px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100"
           >
             <CiHeart className="text-2xl" />
           </button>
@@ -99,52 +127,80 @@ const ProductDetails = ({ product }) => {
               </button>
               <button
                 type="button"
-                onClick={() => handleAddToCart(product)}
-                className="rounded flex w-full mt-2 md:mt-0 items-center justify-center gap-2 md:w-52 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#6366f1] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0"
+                disabled={!isValidForm() || isLoading}
+                onClick={handleAddToCart}
+                className="disabled:opacity-50 rounded flex w-full mt-2 md:mt-0 items-center justify-center gap-2 md:w-52 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#6366f1] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0"
               >
-                <MdOutlineShoppingCart className="text-lg" /> Add To Cart
+                {isLoading ? (
+                  <div className="flex justify-center items-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                  </div>
+                ) : (
+                  <>
+                    <MdOutlineShoppingCart className="text-lg" /> Add To Cart
+                  </>
+                )}
               </button>
             </div>
             <hr className="my-6 md:my-8 border-gray-200" />
             <div>
-              <label
-                htmlFor="colorSelect"
-                className="block font-medium text-gray-700"
-              >
-                Select Color:
-              </label>
-              <select
-                id="colorSelect"
-                name="color"
-                className="select-menu mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                defaultValue=""
-              >
-                <option value="" disabled hidden>
-                  Choose a color
-                </option>
+              <p className="block font-medium text-gray-700">Select Color:</p>
+              <div className="flex flex-wrap mt-1">
                 {product.colors.map((color, index) => (
-                  <option
+                  <label
                     key={index}
-                    value={color}
-                    className="select-option bg-white rounded-md"
+                    className="inline-flex items-center mr-4 mb-2"
                   >
-                    {color}
-                  </option>
+                    <input
+                      type="radio"
+                      name="color"
+                      value={color}
+                      checked={selectedColor === color}
+                      onChange={(e) => setSelectedColor(e.target.value)}
+                      className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                      required
+                    />
+                    <span className="ml-2 text-gray-700">{color}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
             <p className="mb-6 mt-4 block font-medium text-gray-700">
               Storage Options:
             </p>
             <div className="flex gap-2">
               {product.storageOptions.map((storageOption, index) => (
-                <span
+                <button
                   key={index}
-                  className="inline-block bg-gray-200 py-1 px-3 rounded-lg"
+                  onClick={() => setStorageOptions(storageOption)}
+                  required
+                  className={`py-2 px-4 rounded-lg text-sm font-medium ${
+                    storageOptions === storageOption
+                      ? "bg-indigo-500 text-white"
+                      : "border text-gray-900"
+                  }`}
                 >
                   {storageOption}
-                </span>
+                </button>
               ))}
+            </div>
+            <div className="mt-4">
+              <label
+                htmlFor="quantity"
+                className="block font-medium text-gray-700"
+              >
+                Quantity:
+              </label>
+              <input
+                type="number"
+                required
+                id="quantity"
+                name="quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                min="1"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              />
             </div>
             <p className="mb-6 mt-4 block font-medium text-gray-700">
               Description:
