@@ -9,6 +9,7 @@ import { MdDelete } from "react-icons/md";
 const page = () => {
   const { userInfo,isLoggedIn } = useContext(GlobalContext);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
@@ -17,6 +18,7 @@ const page = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userAddress, setUserAddress] = useState([]);
   const router  = useRouter();
+  
   const handleAddAddressClick = () => {
     setIsFormVisible(true);
   };
@@ -26,6 +28,7 @@ const page = () => {
     e.preventDefault();
 
     const formData = {
+      name,
       address,
       country,
       city,
@@ -37,6 +40,12 @@ const page = () => {
     const result = await addNewAddress(formData);
     setIsLoading(false);
     getUserAddress();
+    setName("");
+    setAddress("");
+    setCountry("");
+    setCity("");
+    setState("");
+    setPostalCode("");
     if (result.success) {
       toast.success(result.message);
       setIsFormVisible(false);
@@ -46,10 +55,14 @@ const page = () => {
   };
 
   const isValidForm = () => {
-    return address && address.trim() !== "" && country && country.trim() !== "";
-    city && city.trim() !== "";
-    state && state.trim() !== "";
-    postalCode && postalCode.trim() !== "" ? true : false;
+    return (
+      name.trim() !== "" &&
+      address.trim() !== "" &&
+      country.trim() !== "" &&
+      city.trim() !== "" &&
+      state.trim() !== "" &&
+      postalCode.trim() !== ""
+    );
   };
 
   // fetch user cart data
@@ -121,6 +134,9 @@ const page = () => {
                 >
                   <div className="flex capitalize flex-col">
                     <p className="text-sm text-gray-900">
+                    Name of recipient: {addr.name}
+                    </p>
+                    <p className="text-sm text-gray-900">
                       Address: {addr.address}
                     </p>
                     <p className="text-sm text-gray-700">City: {addr.city}</p>
@@ -144,14 +160,14 @@ const page = () => {
                     You have not added an address.
                   </p>
                 </div>
+              </>
+            )}
                 <button
                   onClick={handleAddAddressClick}
                   className="mt-2 mb-4 bg-indigo-500 text-white px-4 focus:outline-none py-2 rounded"
                 >
                   Add Address
                 </button>
-              </>
-            )}
           </div>
         </div>
       </div>
@@ -159,6 +175,22 @@ const page = () => {
       {isFormVisible && (
         <div className="px-6 py-8 border-t border-gray-200">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label
+                htmlFor="name"
+                clasxlame="block text-sm font-medium text-gray-700"
+              >
+                Name of recipient
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 block w-full sm:text-sm border-b-2 py-1.5 px-2 focus:outline-none"
+                required
+              />
+            </div>
             <div>
               <label
                 htmlFor="address"
