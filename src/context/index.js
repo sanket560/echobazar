@@ -6,6 +6,15 @@ const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const GlobalContext = createContext(null);
 
+export const initiaCheckoutFromData = {
+  shippingAddress : {},
+  paymentMethod : '',
+  totalPrice : 0,
+  isPaid : false,
+  paidAt : new Date(),
+  isProcessing : true,
+}
+
 export default function GlobalState({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -14,6 +23,7 @@ export default function GlobalState({ children }) {
   const [selectedProductToUpdate, setSelectedProductToUpdate] = useState(null);
   const [userCartData, setUserCartData] = useState([]);
   const [totalItemsInCart, setTotalItemsInCart] = useState(0);
+  const [checkoutFormData, setCheckoutFormData] = useState(initiaCheckoutFromData);
 
   // fetch all product
   const fetchAllProduct = async () => {
@@ -50,7 +60,7 @@ export default function GlobalState({ children }) {
 
   // Calculate total items in the cart
   useEffect(() => {
-    const totalItems = userCartData.length;
+    const totalItems = userCartData?.length;
     setTotalItemsInCart(totalItems);
   }, [userCartData]);
 
@@ -79,6 +89,8 @@ export default function GlobalState({ children }) {
         userCartData,
         extractGetAllCartItems,
         totalItemsInCart,
+        checkoutFormData, 
+        setCheckoutFormData
       }}
     >
       {children}
