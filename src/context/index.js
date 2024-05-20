@@ -6,14 +6,14 @@ const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const GlobalContext = createContext(null);
 
-export const initiaCheckoutFromData = {
-  shippingAddress : {},
-  paymentMethod : '',
-  totalPrice : 0,
-  isPaid : false,
-  paidAt : new Date(),
-  isProcessing : true,
-}
+export const initialCheckoutFormData = {
+  shippingAddress: {},
+  paymentMethod: "",
+  totalPrice: 0,
+  isPaid: false,
+  paidAt: new Date(),
+  isProcessing: true,
+};
 
 export default function GlobalState({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
@@ -23,7 +23,7 @@ export default function GlobalState({ children }) {
   const [selectedProductToUpdate, setSelectedProductToUpdate] = useState(null);
   const [userCartData, setUserCartData] = useState([]);
   const [totalItemsInCart, setTotalItemsInCart] = useState(0);
-  const [checkoutFormData, setCheckoutFormData] = useState(initiaCheckoutFromData);
+  const [checkoutFormData, setCheckoutFormData] = useState(initialCheckoutFormData);
 
   // fetch all product
   const fetchAllProduct = async () => {
@@ -60,7 +60,7 @@ export default function GlobalState({ children }) {
 
   // Calculate total items in the cart
   useEffect(() => {
-    const totalItems = userCartData?.length;
+    const totalItems = userCartData?.length || 0; 
     setTotalItemsInCart(totalItems);
   }, [userCartData]);
 
@@ -73,6 +73,8 @@ export default function GlobalState({ children }) {
       setIsLoggedIn(false);
     }
   }, []);
+
+  // console.log("context : ",checkoutFormData)
 
   return (
     <GlobalContext.Provider
