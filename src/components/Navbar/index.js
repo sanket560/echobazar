@@ -276,15 +276,15 @@ const Navbar = () => {
                                         </span>
                                       </div>
                                     )}
+                                    <button
+                                      onClick={() =>
+                                        deleteCartProduct(cartItem._id)
+                                      }
+                                    >
+                                      <MdDelete className="text-red-400 text-xl" />
+                                    </button>
                                   </div>
                                 </div>
-                                <button
-                                  onClick={() =>
-                                    deleteCartProduct(cartItem._id)
-                                  }
-                                >
-                                  <MdDelete className="text-red-400 text-xl" />
-                                </button>
                               </div>
                             </div>
                           </li>
