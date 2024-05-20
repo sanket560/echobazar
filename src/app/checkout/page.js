@@ -2,12 +2,16 @@
 import { GlobalContext } from "@/context";
 import { fetchAllAddresses } from "@/controller/address";
 import { deleteFromCart } from "@/controller/cart";
+import { callStripeSession } from "@/controller/stripe";
+import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { MdArrowRightAlt } from "react-icons/md";
+
+const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const page = () => {
   const {
@@ -17,19 +21,30 @@ const page = () => {
     checkoutFormData,
     setCheckoutFormData,
   } = useContext(GlobalContext);
+
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [isOrderProcessing, setIsOrderProcessing] = useState(false);
 
-  const totalPrice = userCartData?.reduce((total, cartItem) => {
-    const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
-    cartItem.totalPrice = itemTotalPrice;
-    return total + itemTotalPrice;
-  }, 0);
+  const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
-  const discountPercentage = 20;
-  const discountAmount = (totalPrice * discountPercentage) / 100;
-  const finalPrice = totalPrice - discountAmount + 200;
-
+   let discountPercentage = 0;
+   let totalPrice = 0;
+   let discountAmount = 0;
+   let finalPrice = 0;
+ 
+   if (userCartData && userCartData.length > 0) {
+     totalPrice = userCartData.reduce((total, cartItem) => {
+       const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
+       cartItem.totalPrice = itemTotalPrice;
+       return total + itemTotalPrice;
+     }, 0);
+ 
+     discountPercentage = 20;
+     discountAmount = (totalPrice * discountPercentage) / 100;
+     finalPrice = totalPrice - discountAmount + 200;
+   }
+ 
   async function deleteCartProduct(getId) {
     const res = await deleteFromCart(getId);
     extractGetAllCartItems();
@@ -41,11 +56,15 @@ const page = () => {
   }
 
   const formatPrice = (price) => {
-    return price.toLocaleString("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-    });
+    if (typeof price !== 'undefined') {
+      return price.toLocaleString("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 0,
+      });
+    } else {
+      return ''; 
+    }
   };
 
   async function getUserAddress() {
@@ -68,14 +87,54 @@ const page = () => {
       shippingAddress: {
         ...checkoutFormData.shippingAddress,
         name: getAddress.name,
-        address: getAddress.address,
-        country: getAddress.country,
         city: getAddress.city,
+        country: getAddress.country,
         state: getAddress.state,
         postalCode: getAddress.postalCode,
+        address: getAddress.address,
       },
     });
   }
+
+  async function handleCheckout() {
+    setIsOrderProcessing(true);
+    const stripe = await stripePromise;
+    const createLineItems = userCartData.map((item) => ({
+      price_data: {
+        currency: "INR",
+        product_data: {
+          images: [item.productID.image],
+          name: item.productID.name,
+        },
+        unit_amount: Math.round(item.totalPrice * 100),
+      },
+      quantity: item.quantity,
+    }));
+
+    const customer = {
+      email: userInfo.email,
+    };
+
+    const res = await callStripeSession({ line_items: createLineItems, customer });
+    setIsOrderProcessing(false);
+
+    if (res.success) {
+      localStorage.setItem("stripe", true);
+      localStorage.setItem("checkoutFormData", JSON.stringify(checkoutFormData));
+
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: res.id,
+      });
+
+      if (error) {
+        console.error('Stripe checkout error:', error);
+        toast.error('Failed to redirect to checkout. Please try again.');
+      }
+    } else {
+      toast.error(res.message || 'Failed to create Stripe session. Please try again.');
+    }
+  }
+
 
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
@@ -140,7 +199,7 @@ const page = () => {
                 </div>
               ))
             ) : (
-              <p>Your cart is empty</p>
+              <p className="mt-4">Your cart is empty</p>
             )}
           </div>
           <div className="flex justify-center flex-col md:flex-row items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
@@ -202,10 +261,10 @@ const page = () => {
                   <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">
                     Shipping Address
                   </p>
-                  {userAddress.length > 0 ? (
+                  {userCartData?.length > 0 && userAddress?.length > 0 ? (
                     userAddress.map((addr, index) => (
                       <div
-                        onClick={() => setSelectedAddress(addr._id)}
+                        onClick={() => handleAddressSelect(addr._id)}
                         className={`flex items-start justify-between mb-4 mt-2 rounded-md bg-gray-100 p-3 ${addr._id === selectedAddress ? "border border-green-400" : ""}`}
                         key={index}
                       >
@@ -242,19 +301,28 @@ const page = () => {
                     ))
                   ) : (
                     <p className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      You have not added an address.
+                      please check cart items if its there or not as well as you have added address in your profile
                     </p>
                   )}
                 </div>
               </div>
             </div>
             <button
+              onClick={handleCheckout}
               disabled={
                 (userCartData && userCartData.length === 0) || !selectedAddress
               }
-              className="flex disabled:bg-indigo-400 items-center mt-8 justify-center rounded bg-indigo-500 w-full px-5 py-2 text-sm text-white transition hover:bg-indigo-400"
+              className="flex disabled:bg-indigo-300 items-center mt-8 justify-center rounded bg-indigo-500 w-full px-5 py-2 text-sm text-white transition hover:bg-indigo-400"
             >
-              Checkout <MdArrowRightAlt className="text-3xl ml-4" />
+              {isOrderProcessing ? (
+                <div className="flex justify-center items-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                </div>
+              ) : (
+                <span className="flex items-center">
+                  Checkout <MdArrowRightAlt className="text-3xl ml-4" />
+                </span>
+              )}
             </button>
           </div>
         </div>

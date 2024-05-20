@@ -1,31 +1,34 @@
 import { NextResponse } from "next/server";
-
-const stripe = require("stripe")(
-  "sk_test_51PI3jGSDe6BFG61YheacnAwP09filjxRSB87KTBJdX0JR0qndO781XdUsKLLskLGrJS4gOgNzIBi16Ahurlfqtam00SCqOzQdj"
-);
+const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   try {
     const res = await req.json();
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: res,
+      line_items: res.line_items,
       mode: "payment",
-      success_url: "http://localhost:3000/checkout" + "?status=success",
-      cancel_url: "http://localhost:3000/checkout" + "?status=cancel",
+      customer_email: res.customer.email,
+      shipping_address_collection: {
+        allowed_countries: ['IN'], // List of allowed countries for shipping
+      },
+      success_url: "http://localhost:3000/checkout?status=success",
+      cancel_url: "http://localhost:3000/checkout?status=cancel",
     });
+
     return NextResponse.json({
-        success : true,
-        id : session.id
+      success: true,
+      id: session.id,
     });
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.log(e);
     return NextResponse.json({
       status: 500,
       success: false,
-      message: "something went wrong",
+      message: "Something went wrong! Please try again.",
     });
   }
 }
