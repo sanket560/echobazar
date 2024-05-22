@@ -1,14 +1,12 @@
 "use client";
 import { GlobalContext } from "@/context";
 import { addNewAddress, deleteAddress, fetchAllAddresses } from "@/controller/address";
-import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
-const Page = () => {
-  const { userInfo, isLoggedIn } = useContext(GlobalContext);
-  const router = useRouter();
+const ProfilePage = () => {
+  const { userInfo } = useContext(GlobalContext);
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [name, setName] = useState("");
@@ -89,7 +87,6 @@ const Page = () => {
     }
   }
 
-
   return (
     <div className="bg-white md:w-[800px] mt-20 mb-10 mx-auto shadow overflow-hidden sm:rounded-lg">
       <div className="px-4 py-5 sm:px-6">
@@ -134,7 +131,7 @@ const Page = () => {
                 >
                   <div className="flex capitalize flex-col">
                     <p className="text-sm text-gray-900">
-                    Name of recipient: {addr.name}
+                      Name of recipient: {addr.name}
                     </p>
                     <p className="text-sm text-gray-900">
                       Address: {addr.address}
@@ -148,7 +145,7 @@ const Page = () => {
                       Pincode: {addr.postalCode}
                     </p>
                   </div>
-                  <button onClick={()=>deleteUserAddress(addr._id)} className="flex-shrink-0 ml-4">
+                  <button onClick={() => deleteUserAddress(addr._id)} className="flex-shrink-0 ml-4">
                     <MdDelete className="text-red-600 text-xl" />
                   </button>
                 </div>
@@ -162,12 +159,12 @@ const Page = () => {
                 </div>
               </>
             )}
-                <button
-                  onClick={handleAddAddressClick}
-                  className="mt-2 mb-4 bg-indigo-500 text-white px-4 focus:outline-none py-2 rounded"
-                >
-                  Add Address
-                </button>
+            <button
+              onClick={handleAddAddressClick}
+              className="mt-2 mb-4 bg-indigo-500 text-white px-4 focus:outline-none py-2 rounded"
+            >
+              Add Address
+            </button>
           </div>
         </div>
       </div>
@@ -178,7 +175,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="name"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 Name of recipient
               </label>
@@ -194,7 +191,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="address"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 Address
               </label>
@@ -210,7 +207,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="country"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 Country
               </label>
@@ -226,7 +223,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="city"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 City
               </label>
@@ -242,7 +239,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="state"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 State
               </label>
@@ -258,7 +255,7 @@ const Page = () => {
             <div>
               <label
                 htmlFor="postalCode"
-                clasxlame="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700"
               >
                 Pincode
               </label>
@@ -291,4 +288,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default ProfilePage;
