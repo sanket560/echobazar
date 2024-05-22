@@ -5,15 +5,18 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   try {
-    const res = await req.json();
+    const { line_items, customer, shipping } = await req.json();
+
+    // Determine allowed countries based on the shipping address
+    const allowedCountries = shipping.address.country === "IN" ? ['IN'] : ['US', 'CA', 'GB', 'AU'];
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: res.line_items,
+      line_items: line_items,
       mode: "payment",
-      customer_email: res.customer.email,
+      customer_email: customer.email,
       shipping_address_collection: {
-        allowed_countries: ['IN'], // List of allowed countries for shipping
+        allowed_countries: allowedCountries,
       },
       success_url: "http://localhost:3000/checkout?status=success",
       cancel_url: "http://localhost:3000/checkout?status=cancel",
