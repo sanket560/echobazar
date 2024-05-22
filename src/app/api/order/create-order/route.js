@@ -9,6 +9,7 @@ export async function POST(req) {
   try {
     await connectDB();
     const data = await req.json();
+    
     const { user } = data;
     const saveNewOrder = await Order.create(data);
     if (saveNewOrder) {
@@ -20,15 +21,14 @@ export async function POST(req) {
     } else {
       return NextResponse.json({
         success: false,
-        message: "Failed to create order try again",
+        message: "Failed to create order. Try again",
       });
     }
-    
   } catch (error) {
     console.log("error in creating order", error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Something went wrong! Please try again later",
     });
   }
 }
