@@ -2,15 +2,11 @@ import Cookies from "js-cookie";
 
 export const callStripeSession = async (formData) => {
   try {
-    const { line_items, currency } = formData;
+    const { line_items, customer, currency, shipping } = formData;
 
-    // Check if the currency is not INR
-    if (currency && currency !== "INR") {
-      formData.shipping = {
-        address: {
-          country: "US", 
-        },
-      };
+    // If currency is not INR, ensure the shipping address is outside India
+    if (currency !== "INR") {
+      shipping.address.country = "US"; // Set to a non-Indian country
     }
 
     const res = await fetch("/api/stripe", {
@@ -19,7 +15,7 @@ export const callStripeSession = async (formData) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
-      body: JSON.stringify(formData), // Send the entire formData object
+      body: JSON.stringify(formData),
     });
 
     if (!res.ok) {
@@ -30,5 +26,9 @@ export const callStripeSession = async (formData) => {
     return data;
   } catch (e) {
     console.error("Error calling Stripe session:", e);
+    return {
+      success: false,
+      message: e.message,
+    };
   }
 };
