@@ -6,15 +6,6 @@ const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const GlobalContext = createContext(null);
 
-export const initialCheckoutFormData = {
-  shippingAddress: {},
-  paymentMethod: "",
-  totalPrice: 0,
-  isPaid: false,
-  paidAt: new Date(),
-  isProcessing: true,
-};
-
 export default function GlobalState({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -23,7 +14,6 @@ export default function GlobalState({ children }) {
   const [selectedProductToUpdate, setSelectedProductToUpdate] = useState(null);
   const [userCartData, setUserCartData] = useState([]);
   const [totalItemsInCart, setTotalItemsInCart] = useState(0);
-  const [checkoutFormData, setCheckoutFormData] = useState(initialCheckoutFormData);
 
   // fetch all product
   const fetchAllProduct = async () => {
@@ -74,8 +64,6 @@ export default function GlobalState({ children }) {
     }
   }, []);
 
-  // console.log("context : ",checkoutFormData)
-
   return (
     <GlobalContext.Provider
       value={{
@@ -91,8 +79,6 @@ export default function GlobalState({ children }) {
         userCartData,
         extractGetAllCartItems,
         totalItemsInCart,
-        checkoutFormData, 
-        setCheckoutFormData
       }}
     >
       {children}
