@@ -16,7 +16,8 @@ import { MdArrowRightAlt } from "react-icons/md";
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const Page = () => {
-  const { userInfo, userCartData, extractGetAllCartItems } = useContext(GlobalContext);
+  const { userInfo, userCartData, extractGetAllCartItems } =
+    useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
@@ -79,7 +80,9 @@ const Page = () => {
 
   function handleAddressSelect(addressId) {
     setSelectedAddress(addressId);
-    const selectedAddressDetails = userAddress.find(addr => addr._id === addressId);
+    const selectedAddressDetails = userAddress.find(
+      (addr) => addr._id === addressId
+    );
 
     if (selectedAddressDetails) {
       const orderData = {
@@ -98,7 +101,6 @@ const Page = () => {
       };
 
       sessionStorage.setItem("orderData", JSON.stringify(orderData));
-      console.log("Updated Order Data after address selection: ", orderData);
     } else {
       console.error("Selected address details not found.");
     }
@@ -123,8 +125,6 @@ const Page = () => {
       email: userInfo.email,
     };
 
-    console.log("Order Data before Stripe session: ", orderData);
-
     const res = await callStripeSession({
       line_items: createLineItems,
       customer,
@@ -147,20 +147,29 @@ const Page = () => {
         toast.error("Failed to redirect to checkout. Please try again.");
       }
     } else {
-      toast.error(res.message || "Failed to create Stripe session. Please try again.");
+      toast.error(
+        res.message || "Failed to create Stripe session. Please try again."
+      );
     }
   }
 
   useEffect(() => {
     async function createFinalOrder() {
       const isStripe = JSON.parse(sessionStorage.getItem("stripe"));
-      if (isStripe && params.get("status") === "success" && userCartData && userCartData.length > 0) {
+      if (
+        isStripe &&
+        params.get("status") === "success" &&
+        userCartData &&
+        userCartData.length > 0
+      ) {
         setIsOrderProcessing(true);
         const getOrderData = JSON.parse(sessionStorage.getItem("orderData"));
 
-        console.log("Retrieved Order Data for final order: ", getOrderData);
-
-        if (!getOrderData || !getOrderData.shippingAddress || Object.keys(getOrderData.shippingAddress).length === 0) {
+        if (
+          !getOrderData ||
+          !getOrderData.shippingAddress ||
+          Object.keys(getOrderData.shippingAddress).length === 0
+        ) {
           console.error("Retrieved Order Data is empty or invalid");
           return;
         }
@@ -179,8 +188,6 @@ const Page = () => {
           paidAt: new Date(),
         };
 
-        console.log("Final Order Data to backend: ", createFinalOrderData);
-
         const res = await createNewOrder(createFinalOrderData);
         if (res.success) {
           extractGetAllCartItems();
@@ -188,6 +195,7 @@ const Page = () => {
           setIsOrderProcessing(false);
           toast.success(res.message);
         } else {
+          extractGetAllCartItems();
           setIsOrderProcessing(false);
           setOrderSuccess(false);
           toast.error(res.message);
@@ -197,19 +205,16 @@ const Page = () => {
     createFinalOrder();
   }, [params.get("status"), userCartData]);
 
-
   if (orderSuccess) {
     return (
       <section className="h-screen flex items-center justify-center">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8 ">
-            <div className="bg-white">
-              <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
-                <h1 className="font-bold text-lg">
-                  Your payment is successfull and you will be redirected to
-                  orders page in 2 seconds !
-                </h1>
-              </div>
+            <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
+              <h1 className="font-bold text-lg">
+                Your payment is successfull and you will be redirected to orders
+                page in 2 seconds !
+              </h1>
             </div>
           </div>
         </div>
