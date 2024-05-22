@@ -1,7 +1,7 @@
 "use client";
 import { getAllCartItems } from "@/controller/cart";
 import Cookies from "js-cookie";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const GlobalContext = createContext(null);
