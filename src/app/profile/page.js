@@ -1,12 +1,15 @@
 "use client";
 import { GlobalContext } from "@/context";
 import { addNewAddress, deleteAddress, fetchAllAddresses } from "@/controller/address";
+import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
 const Page = () => {
-  const { userInfo } = useContext(GlobalContext);
+  const { userInfo, isLoggedIn } = useContext(GlobalContext);
+  const router = useRouter();
+
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -16,7 +19,7 @@ const Page = () => {
   const [postalCode, setPostalCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userAddress, setUserAddress] = useState([]);
-  
+
   const handleAddAddressClick = () => {
     setIsFormVisible(true);
   };
@@ -63,7 +66,6 @@ const Page = () => {
     );
   };
 
-  // fetch user cart data
   async function getUserAddress() {
     if (userInfo && userInfo._id) {
       const res = await fetchAllAddresses(userInfo._id);
