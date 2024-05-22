@@ -268,12 +268,12 @@ const Navbar = () => {
                                       <span>Quantity:</span>
                                       <span>{cartItem.quantity}</span>
                                     </div>
-                                    <div className="flex text-sm items-center gap-2">
-                                      <span>Total:</span>
-                                      <span>
-                                        {formatPrice(cartItem.totalPrice)}
-                                      </span>
-                                    </div>
+                                      <div className="flex text-sm items-center gap-2">
+                                        <span>Total:</span>
+                                        <span>
+                                          {formatPrice(cartItem.totalPrice)}
+                                        </span>
+                                      </div>
                                     <button
                                       onClick={() =>
                                         deleteCartProduct(cartItem._id)
