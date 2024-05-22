@@ -1,13 +1,12 @@
 "use client";
 import { GlobalContext } from "@/context";
 import { addNewAddress, deleteAddress, fetchAllAddresses } from "@/controller/address";
-import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
 const Page = () => {
-  const { userInfo,isLoggedIn } = useContext(GlobalContext);
+  const { userInfo } = useContext(GlobalContext);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -17,7 +16,6 @@ const Page = () => {
   const [postalCode, setPostalCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userAddress, setUserAddress] = useState([]);
-  const router  = useRouter();
   
   const handleAddAddressClick = () => {
     setIsFormVisible(true);
