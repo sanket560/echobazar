@@ -7,7 +7,7 @@ import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
@@ -23,6 +23,7 @@ const Page = () => {
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const params = useSearchParams();
+  const router = useRouter();
 
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
@@ -348,52 +349,60 @@ const Page = () => {
                     Shipping Address
                   </p>
                   {userCartData?.length > 0 && userAddress?.length > 0 ? (
-                    userAddress.map((addr, index) => (
-                      <div
-                        onClick={() => handleAddressSelect(addr._id)}
-                        className={`flex items-start justify-between mb-4 mt-2 rounded-md bg-gray-100 p-3 ${addr._id === selectedAddress ? "border border-green-400" : ""}`}
-                        key={index}
-                      >
-                        <div className="flex capitalize flex-col">
-                          <p className="text-sm text-gray-900">
-                            Name of recipient: {addr.name}
-                          </p>
-                          <p className="text-sm text-gray-900">
-                            Address: {addr.address}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            City: {addr.city}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            State: {addr.state}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            Country: {addr.country}
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            Pincode: {addr.postalCode}
-                          </p>
+                    <>
+                      {userAddress.map((addr, index) => (
+                        <div
+                          onClick={() => handleAddressSelect(addr._id)}
+                          className={`flex items-start w-64 justify-between mb-4 mt-2 rounded-md bg-gray-100 p-3 ${addr._id === selectedAddress ? "border border-green-400" : ""}`}
+                          key={index}
+                        >
+                          <div className="flex capitalize flex-col">
+                            <p className="text-sm text-gray-900">
+                              Name of recipient: {addr.name}
+                            </p>
+                            <p className="text-sm text-gray-900">
+                              Address: {addr.address}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              City: {addr.city}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              State: {addr.state}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              Country: {addr.country}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              Pincode: {addr.postalCode}
+                            </p>
+                          </div>
+                          <div className="flex items-center">
+                            <input
+                              type="radio"
+                              name="selectedAddress"
+                              checked={addr._id === selectedAddress}
+                              onChange={() => setSelectedAddress(addr._id)}
+                              className="form-radio text-indigo-600"
+                            />
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <input
-                            type="radio"
-                            name="selectedAddress"
-                            checked={addr._id === selectedAddress}
-                            onChange={() => setSelectedAddress(addr._id)}
-                            className="form-radio text-indigo-600"
-                          />
-                        </div>
-                      </div>
-                    ))
+                      ))}
+                      <Link href="/profile">
+                        <p className="text-sm text-center text-gray-900 cursor-pointer hover:text-indigo-500">
+                          Add New Address
+                        </p>
+                      </Link>
+                    </>
                   ) : (
                     <p className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      please check cart items if its there or not as well as you
-                      have added address in your profile
+                      Please check if there are items in your cart and if you
+                      have added an address in your profile.
                     </p>
                   )}
                 </div>
               </div>
             </div>
+
             <button
               onClick={handleCheckout}
               disabled={
