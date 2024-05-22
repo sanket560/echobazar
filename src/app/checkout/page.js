@@ -2,10 +2,12 @@
 import { GlobalContext } from "@/context";
 import { fetchAllAddresses } from "@/controller/address";
 import { deleteFromCart } from "@/controller/cart";
+import { createNewOrder } from "@/controller/order";
 import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
@@ -13,38 +15,33 @@ import { MdArrowRightAlt } from "react-icons/md";
 
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-const page = () => {
-  const {
-    userInfo,
-    userCartData,
-    extractGetAllCartItems,
-    checkoutFormData,
-    setCheckoutFormData,
-  } = useContext(GlobalContext);
-
+const Page = () => {
+  const { userInfo, userCartData, extractGetAllCartItems } = useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const params = useSearchParams();
 
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
-   let discountPercentage = 0;
-   let totalPrice = 0;
-   let discountAmount = 0;
-   let finalPrice = 0;
- 
-   if (userCartData && userCartData.length > 0) {
-     totalPrice = userCartData.reduce((total, cartItem) => {
-       const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
-       cartItem.totalPrice = itemTotalPrice;
-       return total + itemTotalPrice;
-     }, 0);
- 
-     discountPercentage = 20;
-     discountAmount = (totalPrice * discountPercentage) / 100;
-     finalPrice = totalPrice - discountAmount + 200;
-   }
- 
+  let discountPercentage = 0;
+  let totalPrice = 0;
+  let discountAmount = 0;
+  let finalPrice = 0;
+
+  if (userCartData && userCartData.length > 0) {
+    totalPrice = userCartData.reduce((total, cartItem) => {
+      const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
+      cartItem.totalPrice = itemTotalPrice;
+      return total + itemTotalPrice;
+    }, 0);
+
+    discountPercentage = 20;
+    discountAmount = (totalPrice * discountPercentage) / 100;
+    finalPrice = totalPrice - discountAmount + 200;
+  }
+
   async function deleteCartProduct(getId) {
     const res = await deleteFromCart(getId);
     extractGetAllCartItems();
@@ -56,14 +53,14 @@ const page = () => {
   }
 
   const formatPrice = (price) => {
-    if (typeof price !== 'undefined') {
+    if (typeof price !== "undefined") {
       return price.toLocaleString("en-IN", {
         style: "currency",
         currency: "INR",
         minimumFractionDigits: 0,
       });
     } else {
-      return ''; 
+      return "";
     }
   };
 
@@ -80,24 +77,35 @@ const page = () => {
     }
   }, [userInfo]);
 
-  function handleAddressSelect(getAddress) {
-    setSelectedAddress(getAddress._id);
-    setCheckoutFormData({
-      ...checkoutFormData,
-      shippingAddress: {
-        ...checkoutFormData.shippingAddress,
-        name: getAddress.name,
-        city: getAddress.city,
-        country: getAddress.country,
-        state: getAddress.state,
-        postalCode: getAddress.postalCode,
-        address: getAddress.address,
-      },
-    });
+  function handleAddressSelect(addressId) {
+    setSelectedAddress(addressId);
+    const selectedAddressDetails = userAddress.find(addr => addr._id === addressId);
+
+    if (selectedAddressDetails) {
+      const orderData = {
+        shippingAddress: {
+          name: selectedAddressDetails.name,
+          city: selectedAddressDetails.city,
+          country: selectedAddressDetails.country,
+          state: selectedAddressDetails.state,
+          postalCode: selectedAddressDetails.postalCode,
+          address: selectedAddressDetails.address,
+        },
+        totalPrice: finalPrice,
+        paymentMethod: "Stripe",
+        isPaid: false,
+        isProcessing: true,
+      };
+
+      sessionStorage.setItem("orderData", JSON.stringify(orderData));
+      console.log("Updated Order Data after address selection: ", orderData);
+    } else {
+      console.error("Selected address details not found.");
+    }
   }
 
   async function handleCheckout() {
-    setIsOrderProcessing(true);
+    const orderData = JSON.parse(sessionStorage.getItem("orderData"));
     const stripe = await stripePromise;
     const createLineItems = userCartData.map((item) => ({
       price_data: {
@@ -115,26 +123,99 @@ const page = () => {
       email: userInfo.email,
     };
 
-    const res = await callStripeSession({ line_items: createLineItems, customer });
-    setIsOrderProcessing(false);
+    console.log("Order Data before Stripe session: ", orderData);
+
+    const res = await callStripeSession({
+      line_items: createLineItems,
+      customer,
+      currency: "INR",
+      shipping: {
+        address: orderData.shippingAddress,
+      },
+    });
 
     if (res.success) {
-      localStorage.setItem("stripe", true);
-      localStorage.setItem("checkoutFormData", JSON.stringify(checkoutFormData));
+      sessionStorage.setItem("stripe", true);
+      sessionStorage.setItem("orderData", JSON.stringify(orderData));
 
       const { error } = await stripe.redirectToCheckout({
         sessionId: res.id,
       });
 
       if (error) {
-        console.error('Stripe checkout error:', error);
-        toast.error('Failed to redirect to checkout. Please try again.');
+        console.error("Stripe checkout error:", error);
+        toast.error("Failed to redirect to checkout. Please try again.");
       }
     } else {
-      toast.error(res.message || 'Failed to create Stripe session. Please try again.');
+      toast.error(res.message || "Failed to create Stripe session. Please try again.");
     }
   }
 
+  useEffect(() => {
+    async function createFinalOrder() {
+      const isStripe = JSON.parse(sessionStorage.getItem("stripe"));
+      if (isStripe && params.get("status") === "success" && userCartData && userCartData.length > 0) {
+        setIsOrderProcessing(true);
+        const getOrderData = JSON.parse(sessionStorage.getItem("orderData"));
+
+        console.log("Retrieved Order Data for final order: ", getOrderData);
+
+        if (!getOrderData || !getOrderData.shippingAddress || Object.keys(getOrderData.shippingAddress).length === 0) {
+          console.error("Retrieved Order Data is empty or invalid");
+          return;
+        }
+
+        const createFinalOrderData = {
+          user: userInfo._id,
+          shippingAddress: getOrderData.shippingAddress,
+          orderItems: userCartData.map((item) => ({
+            qty: item.quantity,
+            product: item.productID._id,
+          })),
+          paymentMethod: "Stripe",
+          totalPrice: getOrderData.totalPrice,
+          isPaid: true,
+          isProcessing: true,
+          paidAt: new Date(),
+        };
+
+        console.log("Final Order Data to backend: ", createFinalOrderData);
+
+        const res = await createNewOrder(createFinalOrderData);
+        if (res.success) {
+          extractGetAllCartItems();
+          setOrderSuccess(true);
+          setIsOrderProcessing(false);
+          toast.success(res.message);
+        } else {
+          setIsOrderProcessing(false);
+          setOrderSuccess(false);
+          toast.error(res.message);
+        }
+      }
+    }
+    createFinalOrder();
+  }, [params.get("status"), userCartData]);
+
+
+  if (orderSuccess) {
+    return (
+      <section className="h-screen flex items-center justify-center">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8 ">
+            <div className="bg-white">
+              <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
+                <h1 className="font-bold text-lg">
+                  Your payment is successfull and you will be redirected to
+                  orders page in 2 seconds !
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
@@ -301,7 +382,8 @@ const page = () => {
                     ))
                   ) : (
                     <p className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      please check cart items if its there or not as well as you have added address in your profile
+                      please check cart items if its there or not as well as you
+                      have added address in your profile
                     </p>
                   )}
                 </div>
@@ -331,4 +413,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
