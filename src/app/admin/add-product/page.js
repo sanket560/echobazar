@@ -6,17 +6,16 @@ import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-
-const AddNewProducut = () => {
+const AddNewProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const {isLoggedIn  , userInfo} = useContext(GlobalContext);
+  const { isLoggedIn, userInfo } = useContext(GlobalContext);
 
   useEffect(() => {
     if (!isLoggedIn && userInfo?.role !== "Seller") {
       router.push('/');
     }
-  }, [isLoggedIn, router]);
+  }, [isLoggedIn, userInfo?.role, router]);
 
   const handleFormSubmit = async (formData) => {
     setIsLoading(true);
@@ -38,10 +37,9 @@ const AddNewProducut = () => {
       }
     } catch (error) {
       console.log("Error:", error);
-    } finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
-    // console.log("Form submitted:", formData);
   };
 
   return (
@@ -50,10 +48,10 @@ const AddNewProducut = () => {
         <h2 className="text-xl font-semibold text-center mb-4">
           Add New Product
         </h2>
-        <PhoneForm onSubmit={handleFormSubmit} isLoading={isLoading}/>
+        <PhoneForm onSubmit={handleFormSubmit} isLoading={isLoading} />
       </div>
     </div>
   );
 };
 
-export default AddNewProducut;
+export default AddNewProduct;

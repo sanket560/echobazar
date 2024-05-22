@@ -9,13 +9,13 @@ const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 const AllProduct = () => {
   const [products, setProducts] = useState([]);
   const router = useRouter();
-  const {isLoggedIn  , userInfo} = useContext(GlobalContext);
+  const { isLoggedIn, userInfo } = useContext(GlobalContext);
 
   useEffect(() => {
     if (!isLoggedIn && userInfo?.role !== "Seller") {
       router.push('/');
     }
-  }, [isLoggedIn, router]);
+  }, [isLoggedIn, userInfo?.role, router]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +66,7 @@ const AllProduct = () => {
                 <ProductCard
                   key={product._id}
                   product={product}
-                  fetchProducts={fetchProducts} 
+                  fetchProducts={fetchProducts}
                 />
               ))}
             </div>

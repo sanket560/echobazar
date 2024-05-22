@@ -26,7 +26,7 @@ export default function GlobalState({ children }) {
       setAllProduct(responseData?.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching of all product:", error);
+      console.error("Error fetching all products:", error);
     }
   };
 
@@ -35,18 +35,18 @@ export default function GlobalState({ children }) {
   }, []);
 
   // fetch user cart data
-  async function extractGetAllCartItems() {
+  const extractGetAllCartItems = useCallback(async () => {
     if (userInfo && userInfo._id) {
       const res = await getAllCartItems(userInfo._id);
       setUserCartData(res.data);
     }
-  }
+  }, [userInfo]);
 
   useEffect(() => {
     if (userInfo && userInfo._id) {
       extractGetAllCartItems();
     }
-  }, [userInfo]);
+  }, [userInfo, extractGetAllCartItems]);
 
   // Calculate total items in the cart
   useEffect(() => {

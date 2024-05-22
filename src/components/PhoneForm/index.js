@@ -9,6 +9,7 @@ import {
 import { initializeApp } from "firebase/app";
 import { firebaseConfig, firebaseStorageURL } from "@/utils/firebaseConfig";
 import { GlobalContext } from "@/context";
+import Image from "next/image";
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, firebaseStorageURL);
@@ -96,7 +97,7 @@ export const PhoneForm = ({ onSubmit, isLoading, selectedProductToUpdate }) => {
     if (selectedImage) {
       return (
         <div className="mb-4">
-          <img src={selectedImage} alt="Selected" className="w-96 mx-auto" />
+          <Image src={selectedImage} width={200} height={300} alt="Selected" className="w-96 mx-auto" />
           <button type="button" onClick={handleRemoveImage} className="mt-2 text-red-500">
             Remove Image
           </button>

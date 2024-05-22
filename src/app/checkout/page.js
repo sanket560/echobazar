@@ -7,7 +7,7 @@ import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import {useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
@@ -16,14 +16,12 @@ import { MdArrowRightAlt } from "react-icons/md";
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const Page = () => {
-  const { userInfo, userCartData, extractGetAllCartItems } =
-    useContext(GlobalContext);
+  const { userInfo, userCartData, extractGetAllCartItems } = useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const params = useSearchParams();
-  const router = useRouter();
 
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
@@ -44,7 +42,7 @@ const Page = () => {
     finalPrice = totalPrice - discountAmount + 200;
   }
 
-  async function deleteCartProduct(getId) {
+  const deleteCartProduct = async (getId) => {
     const res = await deleteFromCart(getId);
     extractGetAllCartItems();
     if (res.success) {
@@ -52,7 +50,7 @@ const Page = () => {
     } else {
       toast.error("Failed to remove product");
     }
-  }
+  };
 
   const formatPrice = (price) => {
     if (typeof price !== "undefined") {
@@ -66,12 +64,12 @@ const Page = () => {
     }
   };
 
-  async function getUserAddress() {
+  const getUserAddress = async () => {
     if (userInfo && userInfo._id) {
       const res = await fetchAllAddresses(userInfo._id);
       setUserAddress(res.data);
     }
-  }
+  };
 
   useEffect(() => {
     if (userInfo && userInfo._id) {
@@ -79,7 +77,7 @@ const Page = () => {
     }
   }, [userInfo]);
 
-  function handleAddressSelect(addressId) {
+  const handleAddressSelect = (addressId) => {
     setSelectedAddress(addressId);
     const selectedAddressDetails = userAddress.find(
       (addr) => addr._id === addressId
@@ -105,9 +103,9 @@ const Page = () => {
     } else {
       console.error("Selected address details not found.");
     }
-  }
+  };
 
-  async function handleCheckout() {
+  const handleCheckout = async () => {
     const orderData = JSON.parse(sessionStorage.getItem("orderData"));
     const stripe = await stripePromise;
     const createLineItems = userCartData.map((item) => ({
@@ -152,10 +150,10 @@ const Page = () => {
         res.message || "Failed to create Stripe session. Please try again."
       );
     }
-  }
+  };
 
   useEffect(() => {
-    async function createFinalOrder() {
+    const createFinalOrder = async () => {
       const isStripe = JSON.parse(sessionStorage.getItem("stripe"));
       if (
         isStripe &&
@@ -202,10 +200,10 @@ const Page = () => {
           toast.error(res.message);
         }
       }
-    }
+    };
     createFinalOrder();
-  }, [params.get("status"), userCartData]);
-
+  }, [params, userCartData, extractGetAllCartItems, userInfo._id]);
+  
   if (orderSuccess) {
     return (
       <section className="h-screen flex items-center justify-center">
