@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
-const page = () => {
+const Page = () => {
   const { userInfo,isLoggedIn } = useContext(GlobalContext);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [name, setName] = useState("");
@@ -291,4 +291,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
