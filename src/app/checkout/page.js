@@ -7,15 +7,15 @@ import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
-import {useSearchParams } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { Suspense, useCallback, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { MdArrowRightAlt } from "react-icons/md";
 
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-const Page = () => {
+const PageContent = () => {
   const { userInfo, userCartData, extractGetAllCartItems } = useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -64,18 +64,18 @@ const Page = () => {
     }
   };
 
-  const getUserAddress = async () => {
+  const getUserAddress = useCallback(async () => {
     if (userInfo && userInfo._id) {
       const res = await fetchAllAddresses(userInfo._id);
       setUserAddress(res.data);
     }
-  };
+  }, [userInfo]);
 
   useEffect(() => {
     if (userInfo && userInfo._id) {
       getUserAddress();
     }
-  }, [userInfo]);
+  }, [userInfo, getUserAddress]);
 
   const handleAddressSelect = (addressId) => {
     setSelectedAddress(addressId);
@@ -203,7 +203,7 @@ const Page = () => {
     };
     createFinalOrder();
   }, [params, userCartData, extractGetAllCartItems, userInfo._id]);
-  
+
   if (orderSuccess) {
     return (
       <section className="h-screen flex items-center justify-center">
@@ -211,8 +211,8 @@ const Page = () => {
           <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8 ">
             <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
               <h1 className="font-bold text-lg">
-                Your payment is successfull and you will be redirected to orders
-                page in 2 seconds !
+                Your payment is successful and you will be redirected to the orders
+                Page in 2 seconds!
               </h1>
             </div>
           </div>
@@ -224,7 +224,7 @@ const Page = () => {
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
       <p className="text-lg my-5 text-center md:text-xl font-semibold leading-6 xl:leading-5 text-gray-800">
-        Confirm your details check product and select shipping addresss
+        Confirm your details, check product, and select shipping address
       </p>
       <div className="flex flex-col xl:flex-row jusitfy-center items-stretch w-full xl:space-x-8 space-y-4 md:space-y-6 xl:space-y-0">
         <div className="flex flex-col justify-start items-start w-full space-y-4 md:space-y-6 xl:space-y-8">
@@ -300,7 +300,9 @@ const Page = () => {
                   </p>
                 </div>
                 <div className="flex justify-between items-center w-full">
-                  <p className="text-base leading-4 text-gray-800">Discount</p>
+                  <p className="text-base leading-4 text-gray-800">
+                    Discount
+                  </p>
                   <p className="text-base leading-4 text-gray-600">
                     {discountPercentage}% ({formatPrice(discountAmount)})
                   </p>
@@ -309,7 +311,9 @@ const Page = () => {
                   <p className="text-base leading-4 text-gray-800">
                     Shipping charges
                   </p>
-                  <p className="text-base leading-4 text-gray-600">₹ 200.00</p>
+                  <p className="text-base leading-4 text-gray-600">
+                    ₹ 200.00
+                  </p>
                 </div>
               </div>
               <div className="flex justify-between items-center w-full">
@@ -400,11 +404,11 @@ const Page = () => {
                 </div>
               </div>
             </div>
-
             <button
               onClick={handleCheckout}
               disabled={
-                (userCartData && userCartData.length === 0) || !selectedAddress
+                (userCartData && userCartData.length === 0) ||
+                !selectedAddress
               }
               className="flex disabled:bg-indigo-300 items-center mt-8 justify-center rounded bg-indigo-500 w-full px-5 py-2 text-sm text-white transition hover:bg-indigo-400"
             >
@@ -424,5 +428,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <PageContent />
+  </Suspense>
+);
 
 export default Page;
