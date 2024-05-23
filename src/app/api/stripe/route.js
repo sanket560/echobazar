@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY);
+const FRONTEND_BASE_URL = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL;
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,6 @@ export async function POST(req) {
   try {
     const { line_items, customer, shipping } = await req.json();
 
-    // Determine allowed countries based on the shipping address
     const allowedCountries = shipping.address.country === "IN" ? ['IN'] : ['US', 'CA', 'GB', 'AU'];
 
     const session = await stripe.checkout.sessions.create({
@@ -18,8 +18,8 @@ export async function POST(req) {
       shipping_address_collection: {
         allowed_countries: allowedCountries,
       },
-      success_url: "http://localhost:3000/checkout?status=success",
-      cancel_url: "http://localhost:3000/checkout?status=cancel",
+      success_url: `${FRONTEND_BASE_URL}checkout?status=success`,
+      cancel_url: `${FRONTEND_BASE_URL}checkout?status=cancel`,
     });
 
     return NextResponse.json({
