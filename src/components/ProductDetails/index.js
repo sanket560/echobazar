@@ -43,11 +43,12 @@ const ProductDetails = ({ product }) => {
       brand: product.brand,
     });
     setIsLoading(false);
-    extractGetAllCartItems();
     if (res.success) {
       toast.success(res.message);
+      await extractGetAllCartItems();
     } else {
       toast.error(res.message);
+      await extractGetAllCartItems();
     }
   }
 
