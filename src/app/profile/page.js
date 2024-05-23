@@ -1,7 +1,7 @@
 "use client";
 import { GlobalContext } from "@/context";
 import { addNewAddress, deleteAddress, fetchAllAddresses } from "@/controller/address";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
@@ -64,20 +64,20 @@ const ProfilePage = () => {
     );
   };
 
-  async function getUserAddress() {
+  const getUserAddress = useCallback(async () => {
     if (userInfo && userInfo._id) {
       const res = await fetchAllAddresses(userInfo._id);
       setUserAddress(res.data);
     }
-  }
+  }, [userInfo]);
 
   useEffect(() => {
     if (userInfo && userInfo._id) {
       getUserAddress();
     }
-  }, [userInfo]);
+  }, [userInfo, getUserAddress]);
 
-  async function deleteUserAddress(getId) {
+  const deleteUserAddress = async (getId) => {
     const res = await deleteAddress(getId);
     getUserAddress();
     if (res.success) {
@@ -85,7 +85,7 @@ const ProfilePage = () => {
     } else {
       toast.error(res.message);
     }
-  }
+  };
 
   return (
     <div className="bg-white md:w-[800px] mt-20 mb-10 mx-auto shadow overflow-hidden sm:rounded-lg">
