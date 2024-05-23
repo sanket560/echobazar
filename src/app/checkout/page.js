@@ -202,7 +202,7 @@ const PageContent = () => {
       }
     };
     createFinalOrder();
-  }, [params, userCartData, extractGetAllCartItems, userInfo._id]);
+  }, [params, userCartData, extractGetAllCartItems]);
 
   if (orderSuccess) {
     return (
