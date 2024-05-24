@@ -333,9 +333,9 @@ const Navbar = () => {
                       Profile
                     </li>
                   </Link>
-                  <Link href={"/orderHistory"}>
+                  <Link href={"/orders"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                      Order History
+                      Orders
                     </li>
                   </Link>
                   <Link href={"/wishlist"}>
