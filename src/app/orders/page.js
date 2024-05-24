@@ -46,7 +46,7 @@ const Page = () => {
     if (id) {
       getAllUserOrdersData();
     }
-  }, [id, isLoggedIn, router]);
+  }, [id, isLoggedIn, router, getAllUserOrdersData]);
 
   return (
     <section className="text-gray-600 body-font mt-10">

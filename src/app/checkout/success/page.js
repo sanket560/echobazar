@@ -29,7 +29,7 @@ const Page = () => {
         }
 
         const createFinalOrderData = {
-          user: userInfo._id,
+          user: userInfo?._id,
           shippingAddress: getOrderData.shippingAddress,
           orderItems: userCartData.map((item) => ({
             qty: item.quantity,
@@ -53,7 +53,7 @@ const Page = () => {
       }
     };
     createFinalOrder();
-  }, [isSuccess, userCartData, extractGetAllCartItems, userInfo._id]);
+  }, [isSuccess, userCartData, extractGetAllCartItems, userInfo?._id]);
 
   useEffect(() => {
     if (!isLoggedIn) {
