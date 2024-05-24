@@ -2,13 +2,17 @@
 import { GlobalContext } from "@/context";
 import { fetchAllAddresses } from "@/controller/address";
 import { deleteFromCart } from "@/controller/cart";
-import { createNewOrder } from "@/controller/order";
 import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import React, { Suspense, useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { MdArrowRightAlt } from "react-icons/md";
@@ -16,12 +20,11 @@ import { MdArrowRightAlt } from "react-icons/md";
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const PageContent = () => {
-  const { userInfo, userCartData, extractGetAllCartItems } = useContext(GlobalContext);
+  const { userInfo, userCartData, extractGetAllCartItems } =
+    useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isOrderProcessing, setIsOrderProcessing] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const params = useSearchParams();
+  const [loading, setLoading] = useState(false);
 
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
@@ -106,6 +109,7 @@ const PageContent = () => {
   };
 
   const handleCheckout = async () => {
+    setLoading(true);
     const orderData = JSON.parse(sessionStorage.getItem("orderData"));
     const stripe = await stripePromise;
     const createLineItems = userCartData.map((item) => ({
@@ -144,82 +148,15 @@ const PageContent = () => {
       if (error) {
         console.error("Stripe checkout error:", error);
         toast.error("Failed to redirect to checkout. Please try again.");
+        setLoading(false);
       }
     } else {
       toast.error(
         res.message || "Failed to create Stripe session. Please try again."
       );
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const createFinalOrder = async () => {
-      const isStripe = JSON.parse(sessionStorage.getItem("stripe"));
-      if (
-        isStripe &&
-        params.get("status") === "success" &&
-        userCartData &&
-        userCartData.length > 0
-      ) {
-        setIsOrderProcessing(true);
-        const getOrderData = JSON.parse(sessionStorage.getItem("orderData"));
-
-        if (
-          !getOrderData ||
-          !getOrderData.shippingAddress ||
-          Object.keys(getOrderData.shippingAddress).length === 0
-        ) {
-          console.error("Retrieved Order Data is empty or invalid");
-          return;
-        }
-
-        const createFinalOrderData = {
-          user: userInfo._id,
-          shippingAddress: getOrderData.shippingAddress,
-          orderItems: userCartData.map((item) => ({
-            qty: item.quantity,
-            product: item.productID._id,
-          })),
-          paymentMethod: "Stripe",
-          totalPrice: getOrderData.totalPrice,
-          isPaid: true,
-          isProcessing: true,
-          paidAt: new Date(),
-        };
-
-        const res = await createNewOrder(createFinalOrderData);
-        if (res.success) {
-          extractGetAllCartItems();
-          setOrderSuccess(true);
-          setIsOrderProcessing(false);
-          toast.success(res.message);
-        } else {
-          extractGetAllCartItems();
-          setIsOrderProcessing(false);
-          setOrderSuccess(false);
-          toast.error(res.message);
-        }
-      }
-    };
-    createFinalOrder();
-  }, [params, userCartData, extractGetAllCartItems]);
-
-  if (orderSuccess) {
-    return (
-      <section className="h-screen flex items-center justify-center">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8 ">
-            <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
-              <h1 className="font-bold text-lg">
-                Your payment is successful and you will be redirected to the orders
-                Page in 2 seconds!
-              </h1>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
@@ -300,9 +237,7 @@ const PageContent = () => {
                   </p>
                 </div>
                 <div className="flex justify-between items-center w-full">
-                  <p className="text-base leading-4 text-gray-800">
-                    Discount
-                  </p>
+                  <p className="text-base leading-4 text-gray-800">Discount</p>
                   <p className="text-base leading-4 text-gray-600">
                     {discountPercentage}% ({formatPrice(discountAmount)})
                   </p>
@@ -311,9 +246,7 @@ const PageContent = () => {
                   <p className="text-base leading-4 text-gray-800">
                     Shipping charges
                   </p>
-                  <p className="text-base leading-4 text-gray-600">
-                    ₹ 200.00
-                  </p>
+                  <p className="text-base leading-4 text-gray-600">₹ 200.00</p>
                 </div>
               </div>
               <div className="flex justify-between items-center w-full">
@@ -355,10 +288,14 @@ const PageContent = () => {
                       {userAddress.map((addr, index) => (
                         <div
                           onClick={() => handleAddressSelect(addr._id)}
-                          className={`flex items-start w-64 justify-between mb-4 mt-2 rounded-md bg-gray-100 p-3 ${addr._id === selectedAddress ? "border border-green-400" : ""}`}
+                          className={`flex items-start w-full max-w-xs justify-between mb-4 mt-2 rounded-md bg-gray-100 p-3 cursor-pointer ${
+                            addr._id === selectedAddress
+                              ? "border border-green-400"
+                              : ""
+                          }`}
                           key={index}
                         >
-                          <div className="flex capitalize flex-col">
+                          <div className="flex capitalize flex-col w-full">
                             <p className="text-sm text-gray-900">
                               Name of recipient: {addr.name}
                             </p>
@@ -404,15 +341,17 @@ const PageContent = () => {
                 </div>
               </div>
             </div>
+
             <button
               onClick={handleCheckout}
               disabled={
                 (userCartData && userCartData.length === 0) ||
-                !selectedAddress
+                !selectedAddress ||
+                loading
               }
               className="flex disabled:bg-indigo-300 items-center mt-8 justify-center rounded bg-indigo-500 w-full px-5 py-2 text-sm text-white transition hover:bg-indigo-400"
             >
-              {isOrderProcessing ? (
+              {loading ? (
                 <div className="flex justify-center items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
                 </div>
