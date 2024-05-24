@@ -62,8 +62,8 @@ const menuItemsOfMobile = [
     link: "/profile",
   },
   {
-    name: "Order History",
-    link: "/order-history",
+    name: "Orders",
+    link: "/orders",
   },
   {
     name: "Wishlist",
