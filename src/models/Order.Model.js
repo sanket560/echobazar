@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Product from "./Product.Model";
+import User from "./User.Model";
 
 const OrderSchema = new mongoose.Schema(
   {
