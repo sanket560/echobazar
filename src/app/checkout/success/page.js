@@ -53,7 +53,7 @@ const Page = () => {
       }
     };
     createFinalOrder();
-  }, [isSuccess, userCartData, extractGetAllCartItems]);
+  }, [isSuccess, userCartData, extractGetAllCartItems, userInfo._id]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -62,7 +62,7 @@ const Page = () => {
     setTimeout(() => {
       router.push("/orders");
     }, 5000);
-  }, [router]);
+  }, [router, isLoggedIn]);
 
   return (
     <section className="h-screen flex items-center justify-center">

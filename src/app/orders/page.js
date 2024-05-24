@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
-const page = () => {
+const Page = () => {
   const { userInfo, isLoggedIn } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [userOrders, setUserOrders] = useState([]);
@@ -26,7 +26,7 @@ const page = () => {
     }
   };
 
-  async function getAllUserOrdersData() {
+  const getAllUserOrdersData = async () => {
     setLoading(true);
     const res = await getAllOrderForUser(id);
     if (res.success) {
@@ -35,7 +35,7 @@ const page = () => {
       console.log(res.message);
     }
     setLoading(false);
-  }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,7 +46,7 @@ const page = () => {
     if (id) {
       getAllUserOrdersData();
     }
-  }, [id,isLoggedIn,router]);
+  }, [id, isLoggedIn, router]);
 
   return (
     <section className="text-gray-600 body-font mt-10">
@@ -135,4 +135,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
