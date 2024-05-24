@@ -6,11 +6,8 @@ import React, { useContext, useEffect } from "react";
 import toast from "react-hot-toast";
 
 const Page = () => {
-  const {
-    userInfo,
-    userCartData,
-    extractGetAllCartItems,
-  } = useContext(GlobalContext);
+  const { isLoggedIn, userInfo, userCartData, extractGetAllCartItems } =
+    useContext(GlobalContext);
 
   const pathname = usePathname();
   const isSuccess = pathname.includes("success");
@@ -56,16 +53,15 @@ const Page = () => {
       }
     };
     createFinalOrder();
-  }, [
-    isSuccess,
-    userCartData,
-    extractGetAllCartItems,
-  ]);
+  }, [isSuccess, userCartData, extractGetAllCartItems]);
 
   useEffect(() => {
-      setTimeout(() => {
-        router.push("/orders");
-      }, 5000);
+    if (!isLoggedIn) {
+      router.push("/");
+    }
+    setTimeout(() => {
+      router.push("/orders");
+    }, 5000);
   }, [router]);
 
   return (

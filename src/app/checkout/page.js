@@ -6,6 +6,7 @@ import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, {
   Suspense,
   useCallback,
@@ -20,12 +21,12 @@ import { MdArrowRightAlt } from "react-icons/md";
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
 const PageContent = () => {
-  const { userInfo, userCartData, extractGetAllCartItems } =
+  const { isLoggedIn, userInfo, userCartData, extractGetAllCartItems } =
     useContext(GlobalContext);
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
 
   let discountPercentage = 0;
@@ -157,6 +158,12 @@ const PageContent = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">

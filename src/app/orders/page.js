@@ -3,14 +3,15 @@ import { GlobalContext } from "@/context";
 import { getAllOrderForUser } from "@/controller/order";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
 const page = () => {
-  const { userInfo } = useContext(GlobalContext);
+  const { userInfo, isLoggedIn } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [userOrders, setUserOrders] = useState([]);
-
+  const router = useRouter();
   const id = userInfo?._id;
 
   const formatPrice = (price) => {
@@ -38,11 +39,14 @@ const page = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!isLoggedIn) {
+      router.push('/');
+    }
 
     if (id) {
       getAllUserOrdersData();
     }
-  }, [id]);
+  }, [id,isLoggedIn,router]);
 
   return (
     <section className="text-gray-600 body-font mt-10">

@@ -1,12 +1,13 @@
 "use client";
 import { GlobalContext } from "@/context";
 import { addNewAddress, deleteAddress, fetchAllAddresses } from "@/controller/address";
+import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
 const ProfilePage = () => {
-  const { userInfo } = useContext(GlobalContext);
+  const { userInfo , isLoggedIn } = useContext(GlobalContext);
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [name, setName] = useState("");
@@ -17,7 +18,8 @@ const ProfilePage = () => {
   const [postalCode, setPostalCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userAddress, setUserAddress] = useState([]);
-
+  const router = useRouter();
+  
   const handleAddAddressClick = () => {
     setIsFormVisible(true);
   };
@@ -86,6 +88,12 @@ const ProfilePage = () => {
       toast.error(res.message);
     }
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push('/');
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <div className="bg-white md:w-[800px] mt-20 mb-10 mx-auto shadow overflow-hidden sm:rounded-lg">
