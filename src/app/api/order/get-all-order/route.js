@@ -1,5 +1,6 @@
-import connectDB from "@/database/dbConfig";
+import mongoose from "mongoose";
 import Order from "@/models/Order.Model";
+import connectDB from "@/database/dbConfig";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +18,7 @@ export async function GET(req) {
       });
     }
 
-    const extractAllOrders = await Order.find({ user: id }).populate(
-      "orderItems.product"
-    );
+    const extractAllOrders = await Order.find({ user: id }).populate("orderItems.product");
 
     if (extractAllOrders) {
       return NextResponse.json({
@@ -36,7 +35,7 @@ export async function GET(req) {
     console.log("error in getting order", error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Something went wrong! Please try again later",
     });
   }
 }
