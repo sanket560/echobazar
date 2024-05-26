@@ -18,7 +18,7 @@ export async function POST(req) {
       shipping_address_collection: {
         allowed_countries: allowedCountries,
       },
-      success_url: `${FRONTEND_BASE_URL}checkout/success`,
+      success_url: `${FRONTEND_BASE_URL}checkout?status=success`,
       cancel_url: `${FRONTEND_BASE_URL}checkout?status=cancel`,
     });
 
