@@ -215,15 +215,22 @@ const PageContent = () => {
     finalPrice = totalPrice - discountAmount + 200;
   }
 
-  const deleteCartProduct = async (getId) => {
-    const res = await deleteFromCart(getId);
-    extractGetAllCartItems();
-    if (res.success) {
-      toast.success("Product Removed From Cart");
-    } else {
-      toast.error("Failed to remove product");
+  async function deleteCartProduct(getId) {
+    const deletePromise = deleteFromCart(getId);
+
+    toast.promise(deletePromise, {
+      loading: 'Removing product...',
+      success: 'Product Removed From Cart',
+      error: 'Failed to remove product',
+    });
+  
+    try {
+      const res = await deletePromise;
+      extractGetAllCartItems();
+    } catch (error) {
+      console.error('Failed to remove product:', error);
     }
-  };
+  }
 
   const formatPrice = (price) => {
     if (typeof price !== "undefined") {

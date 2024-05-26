@@ -26,23 +26,35 @@ const ProductCard = ({ product, fetchProducts }) => {
   };
 
   const deleteAProduct = async (productId) => {
-    try {
-      const res = await fetch(`/api/admin/delete-product?id=${productId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
+    const deletePromise = fetch(`/api/admin/delete-product?id=${productId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || 'Failed to delete product');
+        }
+        return data;
       });
-
-      const data = await res.json();
+  
+    toast.promise(deletePromise, {
+      loading: 'Deleting product...',
+      success: 'Product deleted successfully!',
+      error: 'Failed to delete product',
+    });
+  
+    try {
+      const data = await deletePromise;
       if (data.success) {
-        toast.success(data.message);
-        fetchProducts();
+        fetchProducts(); 
       } else {
         toast.error(data.message);
       }
     } catch (e) {
-      console.log(e);
+      console.error('Failed to delete product:', e);
     }
   };
 
