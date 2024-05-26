@@ -4,7 +4,7 @@ import { getAllOrderForUser } from "@/controller/order";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 
 const Page = () => {
@@ -26,7 +26,7 @@ const Page = () => {
     }
   };
 
-  const getAllUserOrdersData = async () => {
+  const getAllUserOrdersData = useCallback(async () => {
     setLoading(true);
     const res = await getAllOrderForUser(id);
     if (res.success) {
@@ -35,7 +35,7 @@ const Page = () => {
       console.log(res.message);
     }
     setLoading(false);
-  };
+  }, [id]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
