@@ -156,14 +156,23 @@ const Navbar = () => {
   }, 0);
 
   async function deleteCartProduct(getId) {
-    const res = await deleteFromCart(getId);
-    extractGetAllCartItems();
-    if (res.success) {
-      toast.success("Product Removed From Cart");
-    } else {
-      toast.error("Failed to remove product");
+    const deletePromise = deleteFromCart(getId);
+    setCartDropDown(false);
+
+    toast.promise(deletePromise, {
+      loading: 'Removing product...',
+      success: 'Product Removed From Cart',
+      error: 'Failed to remove product',
+    });
+  
+    try {
+      const res = await deletePromise;
+      extractGetAllCartItems();
+    } catch (error) {
+      console.error('Failed to remove product:', error);
     }
   }
+  
 
   // console.log(userCartData)
 
