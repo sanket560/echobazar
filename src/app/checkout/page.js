@@ -29,7 +29,7 @@ const PageContent = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOrderProcessing, setIsOrderProcessing] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(true);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   const router = useRouter();
   const params = useSearchParams();
