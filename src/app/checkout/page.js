@@ -2,11 +2,12 @@
 import { GlobalContext } from "@/context";
 import { fetchAllAddresses } from "@/controller/address";
 import { deleteFromCart } from "@/controller/cart";
+import { createNewOrder } from "@/controller/order";
 import { callStripeSession } from "@/controller/stripe";
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, {
   Suspense,
   useCallback,
@@ -17,6 +18,7 @@ import React, {
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { MdArrowRightAlt } from "react-icons/md";
+import { ThreeDots } from "react-loader-spinner";
 
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
@@ -26,47 +28,13 @@ const PageContent = () => {
   const [userAddress, setUserAddress] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isOrderProcessing, setIsOrderProcessing] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(true);
+
   const router = useRouter();
+  const params = useSearchParams();
+
   const stripePromise = loadStripe(PUBLISHABLE_KEY);
-
-  let discountPercentage = 0;
-  let totalPrice = 0;
-  let discountAmount = 0;
-  let finalPrice = 0;
-
-  if (userCartData && userCartData.length > 0) {
-    totalPrice = userCartData.reduce((total, cartItem) => {
-      const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
-      cartItem.totalPrice = itemTotalPrice;
-      return total + itemTotalPrice;
-    }, 0);
-
-    discountPercentage = 20;
-    discountAmount = (totalPrice * discountPercentage) / 100;
-    finalPrice = totalPrice - discountAmount + 200;
-  }
-
-  const deleteCartProduct = async (getId) => {
-    const res = await deleteFromCart(getId);
-    extractGetAllCartItems();
-    if (res.success) {
-      toast.success("Product Removed From Cart");
-    } else {
-      toast.error("Failed to remove product");
-    }
-  };
-
-  const formatPrice = (price) => {
-    if (typeof price !== "undefined") {
-      return price.toLocaleString("en-IN", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 0,
-      });
-    } else {
-      return "";
-    }
-  };
 
   const getUserAddress = useCallback(async () => {
     if (userInfo && userInfo._id) {
@@ -80,6 +48,76 @@ const PageContent = () => {
       getUserAddress();
     }
   }, [userInfo, getUserAddress]);
+
+  useEffect(() => {
+    const createFinalOrder = async () => {
+      const isStripe = JSON.parse(sessionStorage.getItem("stripe"));
+      if (
+        isStripe &&
+        params.get("status") === "success" &&
+        userCartData &&
+        userCartData.length > 0
+      ) {
+        setIsOrderProcessing(true);
+        const getOrderData = JSON.parse(sessionStorage.getItem("orderData"));
+
+        if (
+          !getOrderData ||
+          !getOrderData.shippingAddress ||
+          Object.keys(getOrderData.shippingAddress).length === 0
+        ) {
+          console.error("Retrieved Order Data is empty or invalid");
+          return;
+        }
+
+        const createFinalOrderData = {
+          user: userInfo?._id,
+          shippingAddress: getOrderData.shippingAddress,
+          orderItems: userCartData.map((item) => ({
+            qty: item.quantity,
+            product: item.productID._id,
+          })),
+          paymentMethod: "Stripe",
+          totalPrice: getOrderData.totalPrice,
+          isPaid: true,
+          isProcessing: true,
+          paidAt: new Date(),
+        };
+
+        try {
+          const res = await createNewOrder(createFinalOrderData);
+          if (res.success) {
+            setIsOrderProcessing(false);
+            setOrderSuccess(true);
+            extractGetAllCartItems();
+            toast.success(res.message);
+          } else {
+            setIsOrderProcessing(false);
+            setOrderSuccess(false);
+            extractGetAllCartItems();
+            toast.error(res.message);
+          }
+        } catch (error) {
+          console.error("Order creation failed:", error);
+          toast.error("An error occurred while creating the order.");
+        }
+      }
+    };
+    createFinalOrder();
+  }, [
+    params.get("status"),
+    userCartData,
+    extractGetAllCartItems,
+    userInfo?._id,
+  ]);
+
+  useEffect(() => {
+    if (orderSuccess) {
+      setTimeout(() => {
+        router.push("/orders");
+      }, [3000]);
+    }
+  }, [orderSuccess]);
 
   const handleAddressSelect = (addressId) => {
     setSelectedAddress(addressId);
@@ -139,6 +177,7 @@ const PageContent = () => {
     });
 
     if (res.success) {
+      setIsOrderProcessing(true);
       sessionStorage.setItem("stripe", true);
       sessionStorage.setItem("orderData", JSON.stringify(orderData));
 
@@ -159,11 +198,87 @@ const PageContent = () => {
     }
   };
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.push('/');
+  let discountPercentage = 0;
+  let totalPrice = 0;
+  let discountAmount = 0;
+  let finalPrice = 0;
+
+  if (userCartData && userCartData.length > 0) {
+    totalPrice = userCartData.reduce((total, cartItem) => {
+      const itemTotalPrice = cartItem.discountPrice * cartItem.quantity;
+      cartItem.totalPrice = itemTotalPrice;
+      return total + itemTotalPrice;
+    }, 0);
+
+    discountPercentage = 20;
+    discountAmount = (totalPrice * discountPercentage) / 100;
+    finalPrice = totalPrice - discountAmount + 200;
+  }
+
+  const deleteCartProduct = async (getId) => {
+    const res = await deleteFromCart(getId);
+    extractGetAllCartItems();
+    if (res.success) {
+      toast.success("Product Removed From Cart");
+    } else {
+      toast.error("Failed to remove product");
     }
-  }, [isLoggedIn, router]);
+  };
+
+  const formatPrice = (price) => {
+    if (typeof price !== "undefined") {
+      return price.toLocaleString("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 0,
+      });
+    } else {
+      return "";
+    }
+  };
+
+  if (orderSuccess) {
+    return (
+      <section className="flex items-center justify-center h-screen">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8 ">
+            <div className="bg-white">
+              <div className="px-4 flex flex-col items-center py-6 sm:px-8 sm:py-10 gap-5">
+                <h1 className="font-bold text-lg">
+                  Your payment is successfull and you will be redirected to
+                  orders page in 2 seconds !
+                </h1>
+                <p>or</p>
+                <button
+                  onClick={() => router.push("/orders")}
+                  className="flex items-center justify-center rounded bg-indigo-500 px-5 py-2 text-sm text-white transition hover:bg-indigo-400"
+                >
+                  View Orders
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isOrderProcessing) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <ThreeDots
+          visible={true}
+          height="80"
+          width="80"
+          color="#6366f1"
+          radius="9"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
