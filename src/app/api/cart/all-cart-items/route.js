@@ -2,6 +2,7 @@ import connectDB from "@/database/dbConfig";
 import Cart from "@/models/Cart.Model";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
+import User from "@/models/User.Model";
 
 export const dynamic = "force-dynamic";
 
