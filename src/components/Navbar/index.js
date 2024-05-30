@@ -65,10 +65,6 @@ const menuItemsOfMobile = [
     name: "Orders",
     link: "/orders",
   },
-  {
-    name: "Wishlist",
-    link: "/Wishlist",
-  },
 ];
 
 const Navbar = () => {
@@ -345,11 +341,6 @@ const Navbar = () => {
                   <Link href={"/orders"}>
                     <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
                       Orders
-                    </li>
-                  </Link>
-                  <Link href={"/wishlist"}>
-                    <li className="px-4 flex items-center gap-2 py-2 cursor-pointer">
-                      Wishlist
                     </li>
                   </Link>
                   <button
