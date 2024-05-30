@@ -1,9 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useContext, useState } from "react";
-import { CiHeart } from "react-icons/ci";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { IoMdShare } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
 import { FaStarHalfAlt } from "react-icons/fa";
 import { addToCart } from "@/controller/cart";
@@ -63,21 +61,7 @@ const ProductDetails = ({ product }) => {
 
   return (
     <section className="md:p-8 p-3 bg-white mt-10 md:py-16 rounded-md">
-      <div className="max-w-7xl px-4 mx-auto 2xl:px-0 relative">
-        <div className="absolute top-0 right-[16rem] md:right-[-75px] z-10">
-          <button
-            type="button"
-            className="w-10 md:w-max flex justify-center items-center mt-3 h-10 md:py-2 md:px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100"
-          >
-            <CiHeart className="text-2xl" />
-          </button>
-          <button
-            type="button"
-            className="w-10 md:w-max flex justify-center items-center mt-3 h-10 md:py-2 md:px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100"
-          >
-            <IoMdShare className="text-2xl" />
-          </button>
-        </div>
+      <div className="max-w-7xl px-4 mx-auto 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
           <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
             <Image
