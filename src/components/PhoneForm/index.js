@@ -97,7 +97,7 @@ export const PhoneForm = ({ onSubmit, isLoading, selectedProductToUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const imageUrl = await uploadImage();
+    const imageUrl = selectedImage instanceof File ? await uploadImage() : selectedImage;
 
     const formData = {
       name,
@@ -130,12 +130,18 @@ export const PhoneForm = ({ onSubmit, isLoading, selectedProductToUpdate }) => {
   return (
     <div className="max-w-md mx-auto p-4 bg-white mt-8">
       <form onSubmit={handleSubmit}>
-      <h2 className="my-4 text-xl font-medium text-gray-700 tracking-wide">
+        <h2 className="my-4 text-xl font-medium text-gray-700 tracking-wide">
           Upload Product Image
         </h2>
         {selectedImage ? (
           <div className="mb-4">
-            <img src={URL.createObjectURL(selectedImage)} alt="Selected" className="mb-2" />
+            <Image
+              src={selectedImage instanceof File ? URL.createObjectURL(selectedImage) : selectedImage}
+              alt="Selected"
+              className="mb-2"
+              width={300}
+              height={400}
+            />
             <button
               type="button"
               onClick={handleImageRemove}
@@ -146,15 +152,37 @@ export const PhoneForm = ({ onSubmit, isLoading, selectedProductToUpdate }) => {
           </div>
         ) : (
           <div className="flex items-center justify-center w-full mb-4">
-            <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+            <label
+              htmlFor="dropzone-file"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+            >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                <svg
+                  className="w-8 h-8 mb-4 text-gray-500"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
                 </svg>
-                <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                <p className="mb-2 text-sm text-gray-500">
+                  <span className="font-semibold">Click to upload</span> or drag and drop
+                </p>
                 <p className="text-xs text-gray-500">Upload only PNG or JPG</p>
               </div>
-              <input id="dropzone-file" type="file" className="hidden" onChange={(e) => setSelectedImage(e.target.files[0])} />
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                onChange={(e) => setSelectedImage(e.target.files[0])}
+              />
             </label>
           </div>
         )}
