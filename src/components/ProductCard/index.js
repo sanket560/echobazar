@@ -15,7 +15,7 @@ const imageStyles = {
 };
 
 const ProductCard = ({ product, fetchProducts }) => {
-  const { setSelectedProductToUpdate } = useContext(GlobalContext);
+  const { setSelectedProductToUpdate ,fetchAllProduct } = useContext(GlobalContext);
   const pathname = usePathname();
   const router = useRouter();
   const isAdminView = pathname.includes("admin");
@@ -49,7 +49,8 @@ const ProductCard = ({ product, fetchProducts }) => {
     try {
       const data = await deletePromise;
       if (data.success) {
-        fetchProducts(); 
+        fetchProducts();
+        fetchAllProduct(); 
       } else {
         toast.error(data.message);
       }
