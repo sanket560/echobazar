@@ -188,7 +188,7 @@ const Admin = () => {
             </div>
           ))
         ) : (
-          <p className="mt-4 md:mt-20 text-center">You don't have any orders</p>
+          <p className="mt-4 md:mt-20 text-center">You don&apos;t have any orders</p>
         )}
       </div>
     </section>
