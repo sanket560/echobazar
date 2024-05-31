@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const AddNewProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { isLoggedIn, userInfo } = useContext(GlobalContext);
+  const { isLoggedIn, userInfo, fetchAllProduct } = useContext(GlobalContext);
 
   useEffect(() => {
     if (!isLoggedIn && userInfo?.role !== "Seller") {
@@ -31,7 +31,8 @@ const AddNewProduct = () => {
       const data = await response.json();
       if (data.success) {
         toast.success(data.message);
-        router.push('/admin/all-product')
+        router.push('/admin/all-product');
+        fetchAllProduct();
       } else {
         toast.error(data.message);
       }
