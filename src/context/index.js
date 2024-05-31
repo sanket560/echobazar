@@ -14,8 +14,8 @@ export default function GlobalState({ children }) {
   const [selectedProductToUpdate, setSelectedProductToUpdate] = useState(null);
   const [userCartData, setUserCartData] = useState([]);
   const [totalItemsInCart, setTotalItemsInCart] = useState(0);
+  const [allOrdersForAllUsers, setAllOrdersForAllUsers] = useState([]);
 
-  // fetch all product
   const fetchAllProduct = async () => {
     setLoading(true);
     try {
@@ -34,7 +34,6 @@ export default function GlobalState({ children }) {
     fetchAllProduct();
   }, []);
 
-  // fetch user cart data
   const extractGetAllCartItems = useCallback(async () => {
     if (userInfo && userInfo._id) {
       const res = await getAllCartItems(userInfo._id);
@@ -48,7 +47,6 @@ export default function GlobalState({ children }) {
     }
   }, [userInfo, extractGetAllCartItems]);
 
-  // Calculate total items in the cart
   useEffect(() => {
     const totalItems = userCartData?.length || 0; 
     setTotalItemsInCart(totalItems);
@@ -68,9 +66,9 @@ export default function GlobalState({ children }) {
     <GlobalContext.Provider
       value={{
         isLoggedIn,
+        setIsLoggedIn,
         selectedProductToUpdate,
         setSelectedProductToUpdate,
-        setIsLoggedIn,
         loading,
         userInfo,
         setUserInfo,
@@ -79,6 +77,9 @@ export default function GlobalState({ children }) {
         userCartData,
         extractGetAllCartItems,
         totalItemsInCart,
+        allOrdersForAllUsers, 
+        setAllOrdersForAllUsers,
+        fetchAllProduct
       }}
     >
       {children}
