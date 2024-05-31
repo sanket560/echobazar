@@ -21,14 +21,20 @@ const AllProduct = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(
-        `${FRONTEND_BASE_URL}/api/admin/all-product`,
-        {
-          method: "GET",
-        }
-      );
+      const response = await fetch(`${FRONTEND_BASE_URL}/api/admin/all-product`, {
+        method: "GET",
+      });
       const responseData = await response.json();
-      setProducts(responseData?.data || []);
+
+      if (userInfo && responseData?.data) {
+        const filteredProducts = responseData.data.filter(
+          (product) => product.sellerName === userInfo.name
+        );
+        setProducts(filteredProducts);
+      } else {
+        setProducts([]);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -37,8 +43,10 @@ const AllProduct = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (userInfo) {
+      fetchProducts();
+    }
+  }, [userInfo]);
 
   return (
     <div className="flex items-center justify-center mt-10 px-5">
