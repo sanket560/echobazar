@@ -106,12 +106,6 @@ const ProductDetails = ({ product }) => {
             <div className="mt-3 sm:gap-4 sm:items-center sm:flex">
               <button
                 type="button"
-                className="rounded flex w-full items-center justify-center gap-2 md:w-52 bg-yellow-400 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#facc15] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0"
-              >
-                Buy Now
-              </button>
-              <button
-                type="button"
                 disabled={!isValidForm() || isLoading}
                 onClick={handleAddToCart}
                 className="disabled:opacity-50 rounded flex w-full mt-2 md:mt-0 items-center justify-center gap-2 md:w-52 bg-indigo-500 md:px-6 py-1.5 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#6366f1] transition duration-150 ease-in-out focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0"
